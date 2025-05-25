@@ -319,8 +319,10 @@
 								<i class="iconmoon icon-Wallet mr-2"></i> {{__('general.wallet')}}:
 								<span class="balanceWallet">{{Helper::userWallet()}}</span>
 							</span>
+							
 						@endif
 
+						<a class="dropdown-item dropdown-navbar" href="{{url('request/money')}}"><i class="iconmoon icon-Wallet mr-2"></i> Request Money</a>
 						<div class="dropdown-divider"></div>
 					@endif
 

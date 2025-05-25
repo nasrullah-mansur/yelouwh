@@ -52,8 +52,10 @@ class AddFundsController extends Controller
    *
    * @return Response
    */
-  public function send()
+  public function send(Request $request)
   {
+
+    return $request;
 
     // Validate Payment Gateway
     Validator::extend('check_payment_gateway', function ($attribute, $value, $parameters) {
@@ -139,7 +141,7 @@ class AddFundsController extends Controller
         break;
 
       case 'NowPayments':
-        return $this->sendNowPayments();
+        return $this->sendNowPyaments();
         break;
 
       case 'Cardinity':

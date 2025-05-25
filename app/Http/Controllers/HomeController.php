@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Mail;
 use App\Helper;
 use App\Models\User;
+use App\Models\Stories;
 use App\Models\Updates;
+use App\Models\Products;
 use App\Models\Bookmarks;
 use App\Models\Categories;
 use App\Models\StoryFonts;
@@ -40,6 +42,10 @@ class HomeController extends Controller
    */
   public function index()
   {
+    
+
+    // return Products::all();
+
     try {
       // Check Datebase access
       $this->settings;
@@ -47,6 +53,8 @@ class HomeController extends Controller
       // Redirect to Installer
       return redirect('install/script');
     }
+
+    
 
     // Home Guest
     if (auth()->guest()) {
@@ -102,10 +110,15 @@ class HomeController extends Controller
         return $this->homeExplore();
       }
 
-      return view('index.' . $home, [
-        'users' => $users ?? null,
-        'usersTotal' => $usersTotal
-      ]);
+      // return Products::all();
+
+      // return view('index.' . $home, [
+      //   'users' => $users ?? null,
+      //   'usersTotal' => $usersTotal
+      // ]);
+
+      return view("new_homepage.index");
+
     } else {
 
       $users = $this->userExplore();
@@ -125,6 +138,8 @@ class HomeController extends Controller
 
       // Pay Per Views User
       $payPerViewsUser = auth()->user()->payPerView()->count();
+
+      
 
       return view('index.home-session', [
         'users' => $users,
@@ -778,5 +793,10 @@ class HomeController extends Controller
       abort(404);
       $server->deleteCache($file);
     }
+  }
+
+
+  public function simulator() {
+    return view('new_homepage.simulator');
   }
 }

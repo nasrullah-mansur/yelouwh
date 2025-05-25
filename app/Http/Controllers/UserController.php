@@ -165,6 +165,8 @@ class UserController extends Controller
 
   public function profile($slug, $media = null)
   {
+   ;
+
     $user = User::whereUsername($slug)
       ->whereStatus('active')
       ->orWhere('status', 'disabled')

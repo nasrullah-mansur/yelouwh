@@ -30,6 +30,7 @@ use App\Http\Controllers\PayPerViewController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\AdvertisingController;
 use App\Http\Controllers\UploadMediaController;
+use App\Http\Controllers\RequestMoneyController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\InstallScriptController;
 use App\Http\Controllers\StripeConnectController;
@@ -66,6 +67,9 @@ use App\Http\Controllers\UploadMediaWelcomeMessageController;
  |-----------------------------------
  */
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/simulator', [HomeController::class, 'simulator'])->name('home.simulator');
+Route::get('/request/money', [RequestMoneyController::class, 'request_money'])->name('request.money');
+Route::post('/request/money', [RequestMoneyController::class, 'request_money_post'])->name('request.money');
 
 Route::get('home', function() {
 	return redirect('/');

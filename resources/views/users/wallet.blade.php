@@ -201,7 +201,7 @@
                 </label>
               </div>
 
-            <button class="btn btn-1 btn-success btn-block mt-4" id="addFundsBtn" type="submit"><i></i> {{__('general.add_funds')}}</button>
+            <button class="btn btn-1 btn-success btn-block mt-4" id="addFundsBtn" type="submit"><i></i>{{__('general.add_funds')}}</button>
           </form>
 
           @if ($data->count() != 0)
