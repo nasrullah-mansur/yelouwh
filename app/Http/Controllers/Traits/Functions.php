@@ -77,7 +77,7 @@ trait Functions
 	}
 
 	// CCBill Form
-	public function ccbillForm($price, $userAuth, $type, $creator = null, $isMessage = null)
+	public function ccbillForm($price, $userAuth, $type, $creator = null, $isMessage = null, $moneyRequestId = null)
 	{
 		// Get Payment Gateway
 		$payment = PaymentGateways::whereName('CCBill')->firstOrFail();
@@ -127,6 +127,7 @@ trait Functions
 		$input['user']          = $userAuth;
 		$input['amountFixed']   = $price;
 		$input['taxes']         = auth()->user()->taxesPayable();
+		$input['moneyRequestId'] = $moneyRequestId;
 
 		// Base url
 		$baseURL = 'https://api.ccbill.com/wap-frontflex/flexforms/' . $payment->ccbill_flexid;

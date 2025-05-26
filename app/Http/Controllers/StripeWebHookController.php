@@ -17,6 +17,7 @@ use App\Models\Transactions;
 use App\Models\Deposits;
 use Stripe\PaymentIntent as StripePaymentIntent;
 use App\Models\User;
+use App\Models\MoneyRequest;
 
 class StripeWebHookController extends WebhookController
 {
@@ -146,6 +147,48 @@ class StripeWebHookController extends WebhookController
 
                     // Add Funds to User
                     User::find($user)->increment('wallet', $amount);
+                  }
+                }
+              }
+            }
+
+            // Money Request Payment
+            if (isset($type) && $type == 'money_request') {
+              if ($object['payment_status'] == 'paid') {
+                $moneyRequestId = $object['metadata']['money_request_id'] ?? null;
+                $requesterId = $object['metadata']['requester_id'] ?? null;
+                
+                if ($moneyRequestId && $requesterId) {
+                  $moneyRequest = MoneyRequest::find($moneyRequestId);
+                  
+                  if ($moneyRequest && $moneyRequest->status === 'pending') {
+                    // Check if payment already processed
+                    $verifiedTxnId = Deposits::where('txn_id', $object['payment_intent'])->first();
+                    
+                    if (!$verifiedTxnId) {
+                      // Update money request status
+                      $moneyRequest->update([
+                        'status' => 'completed',
+                        'payer_id' => $user,
+                        'paid_at' => now()
+                      ]);
+
+                      // Add funds to requester
+                      $requester = User::find($requesterId);
+                      if ($requester) {
+                        $requester->increment('balance', $amount);
+
+                        // Create deposit record for requester
+                        Deposits::create([
+                          'user_id' => $requesterId,
+                          'txn_id' => $object['payment_intent'],
+                          'amount' => $amount,
+                          'payment_gateway' => 'Stripe',
+                          'status' => 'active',
+                          'date' => now()
+                        ]);
+                      }
+                    }
                   }
                 }
               }

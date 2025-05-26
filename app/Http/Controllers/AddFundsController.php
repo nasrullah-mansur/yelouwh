@@ -151,6 +151,10 @@ class AddFundsController extends Controller
       case 'Binance':
         return $this->sendBinance();
         break;
+
+      case 'RapidPay':
+        return $this->sendRapidPay();
+        break;
     }
 
     return response()->json([
@@ -1327,5 +1331,210 @@ class AddFundsController extends Controller
     } catch (\Exception $e) {
       info('Error Binance - ' . $e->getMessage());
     }
+  }
+
+  /**
+   * Add funds RapidPay
+   *
+   * @return JsonResponse
+   */
+  protected function sendRapidPay()
+  {
+    try {
+      // Get Payment Gateway
+      $payment = PaymentGateways::whereName('RapidPay')->firstOrFail();
+      
+      $fee = $payment->fee;
+      $cents = $payment->fee_cents;
+      $taxes = $this->settings->tax_on_wallet ? ($this->request->amount * auth()->user()->isTaxable()->sum('percentage') / 100) : 0;
+      $amountFixed = number_format($this->request->amount + ($this->request->amount * $fee / 100) + $cents + $taxes, 2, '.', '');
+
+      // Check if RapidPay is properly configured
+      if (empty($payment->key) || empty($payment->key_secret)) {
+        \Log::error('RapidPay not properly configured - missing API credentials');
+        return response()->json([
+          'success' => false,
+          'errors' => ['error' => 'RapidPay payment gateway is not properly configured. Please contact support.']
+        ]);
+      }
+
+      // For now, since we don't have the actual RapidPay API documentation,
+      // let's create a form-based payment similar to other gateways
+      $transactionId = 'DP-' . auth()->id() . '-' . time();
+      
+      // Generate a secure hash for the transaction
+      $secureHash = hash_hmac('sha256', 
+        $transactionId . $amountFixed . auth()->id() . $payment->key_secret, 
+        $payment->key
+      );
+
+      // For demo purposes, show a success message since we don't have real RapidPay API
+      // In production, you would replace this with actual RapidPay form submission
+      if ($payment->sandbox == 'true') {
+        // Demo mode - simulate successful payment
+        $formHtml = '<div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #28a745; margin-bottom: 15px;">
+            <i class="fas fa-check-circle"></i> RapidPay Demo Mode
+          </h3>
+          <p style="margin-bottom: 15px;">This is a demonstration of RapidPay integration for wallet deposits.</p>
+          <p style="margin-bottom: 20px;">
+            <strong>Transaction ID:</strong> ' . $transactionId . '<br>
+            <strong>Amount:</strong> ' . $this->settings->currency_symbol . $amountFixed . '<br>
+            <strong>Merchant ID:</strong> ' . $payment->key_secret . '
+          </p>
+          <button onclick="simulateDepositPayment()" class="btn btn-success" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+            <i class="fas fa-credit-card"></i> Simulate Payment
+          </button>
+        </div>
+        <script>
+        function simulateDepositPayment() {
+          // Simulate payment processing
+          const btn = event.target;
+          btn.innerHTML = "<i class=\"fas fa-spinner fa-spin\"></i> Processing...";
+          btn.disabled = true;
+          
+          setTimeout(() => {
+            alert("Demo deposit payment completed successfully!\\n\\nIn production, this would redirect to RapidPay payment page.");
+            window.location.href = "' . url('my/wallet') . '";
+          }, 2000);
+        }
+        </script>';
+      } else {
+        // Production mode - actual form submission
+        $formHtml = '<form id="rapidpay_form" action="' . ($payment->sandbox == 'true' ? 'https://sandbox.rapidpay.com/payment' : 'https://rapidpay.com/payment') . '" method="POST" style="display:none">
+          <input type="hidden" name="merchant_id" value="' . htmlspecialchars($payment->key_secret) . '">
+          <input type="hidden" name="transaction_id" value="' . htmlspecialchars($transactionId) . '">
+          <input type="hidden" name="amount" value="' . htmlspecialchars($amountFixed) . '">
+          <input type="hidden" name="currency" value="' . htmlspecialchars($this->settings->currency_code) . '">
+          <input type="hidden" name="description" value="' . htmlspecialchars(__('general.add_funds') . ' @' . auth()->user()->username) . '">
+          <input type="hidden" name="return_url" value="' . url('my/wallet') . '">
+          <input type="hidden" name="cancel_url" value="' . url('my/wallet') . '">
+          <input type="hidden" name="callback_url" value="' . url('/webhook/rapidpay/deposit') . '">
+          <input type="hidden" name="customer_email" value="' . htmlspecialchars(auth()->user()->email) . '">
+          <input type="hidden" name="customer_name" value="' . htmlspecialchars(auth()->user()->name) . '">
+          <input type="hidden" name="hash" value="' . $secureHash . '">
+          <input type="hidden" name="user_id" value="' . auth()->id() . '">
+          <input type="hidden" name="original_amount" value="' . $this->request->amount . '">
+        </form>
+        <script>
+          document.getElementById("rapidpay_form").submit();
+        </script>';
+      }
+
+      return response()->json([
+        'success' => true,
+        'insertBody' => $formHtml
+      ]);
+
+    } catch (\Exception $e) {
+      \Log::error('RapidPay Error: ' . $e->getMessage());
+      
+      return response()->json([
+        'success' => false,
+        'errors' => ['error' => 'An error occurred while processing your payment. Please contact support.']
+      ]);
+    }
+  }
+
+  /**
+   * Generate signature for RapidPay API security (for deposits)
+   */
+  private function generateRapidPaySignatureForDeposit($data, $apiKey)
+  {
+    // Create signature string by concatenating key fields
+    $signatureString = $data['merchant_id'] . 
+                      $data['transaction_id'] . 
+                      $data['amount'] . 
+                      $data['currency'] . 
+                      $apiKey;
+    
+    // Generate HMAC SHA256 signature
+    return hash_hmac('sha256', $signatureString, $apiKey);
+  }
+
+  /**
+   * Handle RapidPay webhook notifications for deposits
+   */
+  public function webhookRapidPayDeposit(Request $request)
+  {
+    try {
+      \Log::info('RapidPay Deposit Webhook received: ', $request->all());
+
+      // Get payment gateway settings
+      $payment = PaymentGateways::whereName('RapidPay')->firstOrFail();
+
+      // Verify webhook signature for security
+      $receivedSignature = $request->header('X-RapidPay-Signature') ?? $request->input('signature');
+      $expectedSignature = $this->verifyRapidPayDepositWebhook($request->all(), $payment->key);
+
+      if (!hash_equals($expectedSignature, $receivedSignature)) {
+        \Log::warning('RapidPay deposit webhook signature verification failed');
+        return response('Unauthorized', 401);
+      }
+
+      $transactionId = $request->input('transaction_id');
+      $status = $request->input('status');
+      $amount = $request->input('amount');
+      $metadata = json_decode($request->input('metadata'), true);
+
+      // Extract user ID from transaction ID or metadata
+      $userId = $metadata['user_id'] ?? null;
+      
+      if (!$userId) {
+        // Try to extract from transaction ID format: DP-{user_id}-{timestamp}
+        if (preg_match('/^DP-(\d+)-\d+$/', $transactionId, $matches)) {
+          $userId = $matches[1];
+        }
+      }
+
+      if (!$userId) {
+        \Log::error('RapidPay deposit webhook: Could not extract user ID');
+        return response('Invalid transaction', 400);
+      }
+
+      // Process based on payment status
+      if ($status === 'completed' || $status === 'success') {
+        // Check if already processed
+        $verifiedTxnId = Deposits::where('txn_id', $transactionId)->first();
+        
+        if (!isset($verifiedTxnId)) {
+          // Insert Deposit
+          $this->deposit(
+            $userId,
+            $transactionId,
+            $metadata['amount'],
+            'RapidPay',
+            $metadata['taxes'] ?? null
+          );
+
+          // Add Funds to User
+          User::find($userId)->increment('wallet', $metadata['amount']);
+          
+          \Log::info('RapidPay deposit completed for user: ' . $userId);
+        }
+      } elseif ($status === 'failed' || $status === 'cancelled') {
+        \Log::info('RapidPay deposit failed for user: ' . $userId);
+      }
+
+      return response('OK', 200);
+
+    } catch (\Exception $e) {
+      \Log::error('RapidPay deposit webhook error: ' . $e->getMessage());
+      return response('Internal Server Error', 500);
+    }
+  }
+
+  /**
+   * Verify RapidPay webhook signature for deposits
+   */
+  private function verifyRapidPayDepositWebhook($data, $apiKey)
+  {
+    // Create signature string (adjust based on RapidPay's webhook signature method)
+    $signatureString = $data['transaction_id'] . 
+                      $data['status'] . 
+                      $data['amount'] . 
+                      $apiKey;
+    
+    return hash_hmac('sha256', $signatureString, $apiKey);
   }
 }

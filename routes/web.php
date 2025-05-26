@@ -69,7 +69,12 @@ use App\Http\Controllers\UploadMediaWelcomeMessageController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/simulator', [HomeController::class, 'simulator'])->name('home.simulator');
 Route::get('/request/money', [RequestMoneyController::class, 'request_money'])->name('request.money');
-Route::post('/request/money', [RequestMoneyController::class, 'request_money_post'])->name('request.money');
+Route::post('/request/money', [RequestMoneyController::class, 'request_money_post'])->name('request.money.post');
+
+// Public routes for money request payment
+Route::get('/pay-request/{token}', [RequestMoneyController::class, 'showPaymentPage'])->name('pay.request');
+Route::post('/pay-request/{token}', [RequestMoneyController::class, 'processPayment'])->name('pay.request.process');
+Route::get('/pay-request/{token}/success', [RequestMoneyController::class, 'paymentSuccess'])->name('pay.request.success');
 
 Route::get('home', function() {
 	return redirect('/');
@@ -935,3 +940,7 @@ Route::get('verify/squad', [AddFundsController::class, 'verifySquad'])->name('we
 
 // Binance
 Route::any('webhook/binance', [AddFundsController::class, 'webhookBinance'])->name('webhook.binance');
+
+// RapidPay
+Route::any('webhook/rapidpay', [RequestMoneyController::class, 'webhookRapidPay'])->name('webhook.rapidpay');
+Route::any('webhook/rapidpay/deposit', [AddFundsController::class, 'webhookRapidPayDeposit'])->name('webhook.rapidpay.deposit');
