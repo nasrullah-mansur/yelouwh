@@ -537,20 +537,7 @@
                                             </div>
                                         </a>
                                     </div>
-                                    <div class="wins-item">
-                                        <a href="#">
-                                            <div class="img">
-                                                <img src="{{asset('public/new_home_page/wing-cart.png')}}" alt="" />
-                                            </div>
-                                            <div class="cart-title">
-                                                <img src="{{ asset('public/new_home_page/dimond.png') }}" alt="" />
-                                                <span>Lorem ...</span>
-                                            </div>
-                                            <div class="wins-footer">
-                                                <span>2,000 ETS</span>
-                                            </div>
-                                        </a>
-                                    </div>
+                           
                                     <div class="wins-item">
                                         <a href="#">
                                             <div class="img">

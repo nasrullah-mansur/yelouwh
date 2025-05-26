@@ -852,8 +852,27 @@ Route::group(['middleware' => 'private.content'], function() {
  Route::get('payment/stripe', [StripeController::class, 'show'])->name('stripe');
  Route::post('payment/stripe/charge', [StripeController::class, 'charge']);
 
-// Files Images Post
-Route::get('files/storage/{id}/{path}', [UpdatesController::class, 'image'])->where(['id' =>'[0-9]+', 'path' => '.*']); 
+// Files Images Post (Custom handler for nested public directory)
+Route::get('files/storage/{id}/{path}', function($id, $path) {
+    // First try the nested public directory (where files actually are)
+    $nestedPath = public_path('public/uploads/updates/images/' . $path);
+    if (file_exists($nestedPath)) {
+        return response()->file($nestedPath);
+    }
+    
+    // Fallback to regular uploads directory
+    $regularPath = public_path('uploads/updates/images/' . $path);
+    if (file_exists($regularPath)) {
+        return response()->file($regularPath);
+    }
+    
+    // If file doesn't exist, try the original image method
+    try {
+        return app(UpdatesController::class)->image($id, $path);
+    } catch (\Exception $e) {
+        abort(404);
+    }
+})->where(['id' =>'[0-9]+', 'path' => '.*']); 
 
 // Change Lang
 Route::get('change/lang/{id}', [LangController::class, 'changeLang'])->where(['id' => '[a-z]+']);
@@ -874,6 +893,57 @@ Route::get('payment/ccbill', [CCBillController::class, 'show'])->name('ccbill');
 
 // File Media
 Route::get('file/media/{typeMedia}/{fileId}/{filename}', [UpdatesController::class, 'getFileMedia']);
+
+// Serve Avatar Files (check both locations)
+Route::get('public/uploads/avatar/{filename}', function($filename) {
+    // First try the nested public directory (where files actually are)
+    $nestedPath = public_path('public/uploads/avatar/' . $filename);
+    if (file_exists($nestedPath)) {
+        return response()->file($nestedPath);
+    }
+    
+    // Fallback to regular uploads directory
+    $regularPath = public_path('uploads/avatar/' . $filename);
+    if (file_exists($regularPath)) {
+        return response()->file($regularPath);
+    }
+    
+    abort(404);
+})->where('filename', '.*');
+
+// Serve Other Upload Files (check both locations)
+Route::get('public/uploads/{directory}/{filename}', function($directory, $filename) {
+    // First try the nested public directory (where files actually are)
+    $nestedPath = public_path('public/uploads/' . $directory . '/' . $filename);
+    if (file_exists($nestedPath)) {
+        return response()->file($nestedPath);
+    }
+    
+    // Fallback to regular uploads directory
+    $regularPath = public_path('uploads/' . $directory . '/' . $filename);
+    if (file_exists($regularPath)) {
+        return response()->file($regularPath);
+    }
+    
+    abort(404);
+})->where(['directory' => '[a-z_]+', 'filename' => '.*']);
+
+// Serve Public Assets (check both locations)
+Route::get('public/{path}', function($path) {
+    // First try the nested public directory
+    $nestedPath = public_path('public/' . $path);
+    if (file_exists($nestedPath)) {
+        return response()->file($nestedPath);
+    }
+    
+    // Fallback to regular public directory
+    $regularPath = public_path($path);
+    if (file_exists($regularPath)) {
+        return response()->file($regularPath);
+    }
+    
+    abort(404);
+})->where('path', '.*');
 
 Route::any('coinpayments/ipn', [AddFundsController::class, 'coinPaymentsIPN'])->name('coinpaymentsIPN');
 Route::get('wallet/payment/success', [AddFundsController::class, 'paymentProcess'])->name('paymentProcess');
@@ -911,8 +981,27 @@ Route::post('webhook/cardinity', [CardinityController::class, 'webhook'])->name(
 Route::post('subscription/cardinity/cancel/{id}',[CardinityController::class, 'cancelSubscription']);
 Route::post('webhook/cardinity/cancel', [CardinityController::class, 'cancelPayment'])->name('cardinity.cancel');
 
-// Resize Images
-Route::get('assets/{path}/{size}/{file}', [HomeController::class, 'resizeImage'])
+// Resize Images (Custom handler for nested public directory)
+Route::get('assets/{path}/{size}/{file}', function($path, $size, $file) {
+    // First try the nested public directory (where files actually are)
+    $nestedPath = public_path('public/uploads/' . $path . '/' . $file);
+    if (file_exists($nestedPath)) {
+        return response()->file($nestedPath);
+    }
+    
+    // Fallback to regular uploads directory
+    $regularPath = public_path('uploads/' . $path . '/' . $file);
+    if (file_exists($regularPath)) {
+        return response()->file($regularPath);
+    }
+    
+    // If file doesn't exist, try the original resizeImage method
+    try {
+        return app(HomeController::class)->resizeImage($path, $size, $file);
+    } catch (\Exception $e) {
+        abort(404);
+    }
+})
 	->where([
 		'path' =>'[a-z]+', 
 		'size' => '[0-9]+', 

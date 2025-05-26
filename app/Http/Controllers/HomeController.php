@@ -112,12 +112,96 @@ class HomeController extends Controller
 
       // return Products::all();
 
+      // Get featured creators for new homepage
+      $featuredCreators = User::where('featured', 'yes')
+        ->where('status', 'active')
+        ->whereVerifiedId('yes')
+        ->whereHideProfile('no')
+        ->whereHas('plans', function ($query) {
+          $query->where('status', '1');
+        })
+        ->where('id', '<>', config('settings.hide_admin_profile') == 'on' ? 1 : 0)
+        ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%')
+        ->orWhere('featured', 'yes')
+        ->where('status', 'active')
+        ->whereVerifiedId('yes')
+        ->whereHideProfile('no')
+        ->whereFreeSubscription('yes')
+        ->where('id', '<>', config('settings.hide_admin_profile') == 'on' ? 1 : 0)
+        ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%')
+        ->orderBy('featured_date', 'desc')
+        ->select([
+          'id', 'name', 'username', 'avatar', 'profession', 'hide_name', 
+          'verified_id', 'free_subscription', 'featured', 'featured_date'
+        ])
+        ->with([
+          'subscriptions' => fn($q) => $q->select('user_id')->where('stripe_status', 'active')
+        ])
+        ->limit(8)
+        ->get();
+
+      // Get recently added creators for new homepage
+      $recentlyAddedCreators = User::where('status', 'active')
+        ->whereVerifiedId('yes')
+        ->whereHideProfile('no')
+        ->whereHas('plans', function ($query) {
+          $query->where('status', '1');
+        })
+        ->where('id', '<>', config('settings.hide_admin_profile') == 'on' ? 1 : 0)
+        ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%')
+        ->orWhere('status', 'active')
+        ->whereVerifiedId('yes')
+        ->whereHideProfile('no')
+        ->whereFreeSubscription('yes')
+        ->where('id', '<>', config('settings.hide_admin_profile') == 'on' ? 1 : 0)
+        ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%')
+        ->orderBy('id', 'desc')
+        ->select([
+          'id', 'name', 'username', 'avatar', 'profession', 'hide_name', 
+          'verified_id', 'free_subscription', 'featured'
+        ])
+        ->with([
+          'subscriptions' => fn($q) => $q->select('user_id')->where('stripe_status', 'active')
+        ])
+        ->limit(8)
+        ->get();
+
+      // Get recent posts for new homepage
+      $recentPosts = Updates::where('status', 'active')
+        ->whereHas('creator', function ($query) {
+          $query->where('status', 'active')
+            ->whereVerifiedId('yes')
+            ->whereHideProfile('no')
+            ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%');
+          
+          // Handle posts privacy - if guest user, only show posts from creators who allow public viewing
+          if (auth()->guest()) {
+            $query->where('posts_privacy', 1);
+          }
+        })
+        ->orderBy('id', 'desc')
+        ->select([
+          'id', 'title', 'description', 'user_id', 'date', 'locked', 'price', 'status'
+        ])
+        ->with([
+          'creator:id,name,username,avatar,hide_name,verified_id,posts_privacy',
+          'media' => fn($q) => $q->select('id', 'updates_id', 'type', 'image', 'video', 'video_poster', 'video_embed')->where('status', 'active')->limit(1),
+          'likes:id,updates_id',
+          'comments:id,updates_id'
+        ])
+        ->limit(12)
+        ->get();
+
       // return view('index.' . $home, [
       //   'users' => $users ?? null,
       //   'usersTotal' => $usersTotal
       // ]);
 
-      return view("new_homepage.index");
+      return view("new_homepage.index", [
+        'featuredCreators' => $featuredCreators,
+        'recentlyAddedCreators' => $recentlyAddedCreators,
+        'recentPosts' => $recentPosts
+      ]);
 
     } else {
 
