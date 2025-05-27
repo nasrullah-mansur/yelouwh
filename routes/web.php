@@ -1042,5 +1042,15 @@ Route::any('webhook/binance', [AddFundsController::class, 'webhookBinance'])->na
 // RapidPay
 Route::any('webhook/rapidpay', [RequestMoneyController::class, 'webhookRapidPay'])->name('webhook.rapidpay');
 Route::any('webhook/rapidpay/deposit', [AddFundsController::class, 'webhookRapidPayDeposit'])->name('webhook.rapidpay.deposit');
+Route::any('webhook/rapidpay/money-request', [RequestMoneyController::class, 'webhookRapidPay'])->name('webhook.rapidpay.money-request');
+
+// Money Request Webhooks
+Route::post('webhook/paystack/money-request', [RequestMoneyController::class, 'webhookPaystack'])->name('webhook.paystack.money-request');
+Route::post('webhook/mollie/money-request', [RequestMoneyController::class, 'webhookMollie'])->name('webhook.mollie.money-request');
+Route::post('webhook/coinbase/money-request', [RequestMoneyController::class, 'webhookCoinbase'])->name('webhook.coinbase.money-request');
+Route::post('webhook/nowpayments/money-request', [RequestMoneyController::class, 'webhookNowPayments'])->name('webhook.nowpayments.money-request');
+Route::post('webhook/cardinity/money-request', [RequestMoneyController::class, 'webhookCardinity'])->name('webhook.cardinity.money-request');
+Route::post('webhook/binance/money-request', [RequestMoneyController::class, 'webhookBinance'])->name('webhook.binance.money-request');
+Route::post('webhook/flutterwave/money-request', [RequestMoneyController::class, 'webhookFlutterwave'])->name('webhook.flutterwave.money-request');
 
 

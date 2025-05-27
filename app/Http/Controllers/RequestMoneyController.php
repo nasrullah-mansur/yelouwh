@@ -375,9 +375,34 @@ class RequestMoneyController extends Controller
                     [
                         "amount" => [
                             "currency_code" => $this->settings->currency_code,
-                            "value" => $amountFixed
+                            "value" => $amountFixed,
+                            'breakdown' => [
+                                'item_total' => [
+                                    "currency_code" => $this->settings->currency_code,
+                                    "value" => $amountFixed
+                                ],
+                            ],
                         ],
-                        "description" => "Money Request Payment - " . $moneyRequest->description
+                        'description' => "Money Request Payment - " . ($moneyRequest->description ?: 'Payment Request'),
+
+                        'items' => [
+                            [
+                                'name' => "Money Request Payment",
+                                'category' => 'DIGITAL_GOODS',
+                                'quantity' => '1',
+                                'unit_amount' => [
+                                    "currency_code" => $this->settings->currency_code,
+                                    "value" => $amountFixed
+                                ],
+                            ],
+                        ],
+
+                        'custom_id' => http_build_query([
+                            'money_request_id' => $moneyRequest->id,
+                            'amount' => $moneyRequest->amount,
+                            'requester_id' => $moneyRequest->requester_id,
+                            'type' => 'money_request'
+                        ]),
                     ]
                 ]
             ]);
@@ -509,6 +534,12 @@ class RequestMoneyController extends Controller
                 amount: " . ($amount * 100) . ",
                 currency: '" . $this->settings->currency_code . "',
                 ref: '" . \App\Helper::genTranxRef() . "',
+                metadata: {
+                    money_request_id: '" . $moneyRequest->id . "',
+                    amount: '" . $moneyRequest->amount . "',
+                    requester_id: '" . $moneyRequest->requester_id . "',
+                    type: 'money_request'
+                },
                 callback: function(response) {
                     // Handle successful payment
                     window.location.href = '" . route('pay.request.success', ['token' => $moneyRequest->token]) . "?reference=' + response.reference;
@@ -1032,8 +1063,6 @@ class RequestMoneyController extends Controller
                 ]);
             }
 
-            // For now, since we don't have the actual RapidPay API documentation,
-            // let's create a form-based payment similar to other gateways
             $transactionId = 'MR-' . $moneyRequest->id . '-' . time();
             
             // Generate a secure hash for the transaction
@@ -1042,60 +1071,164 @@ class RequestMoneyController extends Controller
                 $payment->key
             );
 
-            // For demo purposes, show a success message since we don't have real RapidPay API
-            // In production, you would replace this with actual RapidPay form submission
-            if ($payment->sandbox == 'true') {
-                // Demo mode - simulate successful payment
-                $formHtml = '<div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
-                    <h3 style="color: #28a745; margin-bottom: 15px;">
-                        <i class="fas fa-check-circle"></i> RapidPay Demo Mode
-                    </h3>
-                    <p style="margin-bottom: 15px;">This is a demonstration of RapidPay integration.</p>
-                    <p style="margin-bottom: 20px;">
-                        <strong>Transaction ID:</strong> ' . $transactionId . '<br>
-                        <strong>Amount:</strong> ' . $this->settings->currency_symbol . $amountFixed . '<br>
-                        <strong>Merchant ID:</strong> ' . $payment->key_secret . '
-                    </p>
-                    <button onclick="simulatePayment()" class="btn btn-success" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
-                        <i class="fas fa-credit-card"></i> Simulate Payment
-                    </button>
+            // Create custom modal HTML for RapidPay with inline event handlers
+            $modalHtml = '
+            <!-- RapidPay Payment Modal -->
+            <div id="rapidPayModal" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            " onclick="if(event.target === this) { this.style.display = \'none\'; this.remove(); }">
+                <div style="
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    max-width: 500px;
+                    width: 90%;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                " onclick="event.stopPropagation();">
+                    <div style="
+                        background: linear-gradient(135deg, #007bff, #0056b3);
+                        color: white;
+                        padding: 20px;
+                        border-radius: 12px 12px 0 0;
+                        text-align: center;
+                        position: relative;
+                    ">
+                        <h5 style="margin: 0; font-size: 1.25rem; font-weight: 600;">
+                            <i class="fas fa-credit-card" style="margin-right: 8px;"></i>RapidPay Payment
+                        </h5>
+                        <button onclick="document.getElementById(\'rapidPayModal\').style.display = \'none\'; document.getElementById(\'rapidPayModal\').remove();" style="
+                            position: absolute;
+                            top: 15px;
+                            right: 20px;
+                            background: none;
+                            border: none;
+                            color: white;
+                            font-size: 24px;
+                            cursor: pointer;
+                            padding: 0;
+                            width: 30px;
+                            height: 30px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        ">&times;</button>
+                    </div>
+                    <div style="padding: 30px; text-align: center;">
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #007bff; margin-bottom: 20px; font-size: 1.1rem;">Payment Details</h4>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                                <div style="flex: 1;">
+                                    <strong>Amount:</strong><br>
+                                    <span style="font-size: 1.5rem; color: #28a745; font-weight: bold;">' . $this->settings->currency_symbol . $amountFixed . '</span>
+                                </div>
+                                <div style="flex: 1;">
+                                    <strong>Transaction ID:</strong><br>
+                                    <small style="color: #6c757d;">' . $transactionId . '</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <p style="color: #6c757d; margin: 0;">You will be redirected to RapidPay secure payment page to complete your transaction.</p>
+                        </div>
+
+                        ' . ($payment->sandbox == 'true' ? '
+                        <div style="
+                            background: #fff3cd;
+                            border: 1px solid #ffeaa7;
+                            border-radius: 8px;
+                            padding: 15px;
+                            margin-bottom: 25px;
+                            color: #856404;
+                        ">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Demo Mode:</strong> This is a test transaction.
+                        </div>
+                        ' : '') . '
+                        
+                        <div style="display: flex; gap: 15px; justify-content: center;">
+                            <button onclick="document.getElementById(\'rapidPayModal\').style.display = \'none\'; document.getElementById(\'rapidPayModal\').remove();" style="
+                                background: #6c757d;
+                                color: white;
+                                border: none;
+                                padding: 12px 24px;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-size: 16px;
+                                transition: background 0.3s;
+                            " onmouseover="this.style.background=\'#5a6268\'" onmouseout="this.style.background=\'#6c757d\'">
+                                <i class="fas fa-times" style="margin-right: 5px;"></i>Cancel
+                            </button>
+                            <button id="proceedToRapidPay" onclick="handleRapidPayProceed()" style="
+                                background: linear-gradient(135deg, #007bff, #0056b3);
+                                color: white;
+                                border: none;
+                                padding: 12px 24px;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-size: 16px;
+                                transition: all 0.3s;
+                            " onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'translateY(0)\'">
+                                <i class="fas fa-credit-card" style="margin-right: 5px;"></i>Proceed to Payment
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <script>
-                function simulatePayment() {
-                    // Simulate payment processing
-                    const btn = event.target;
-                    btn.innerHTML = "<i class=\"fas fa-spinner fa-spin\"></i> Processing...";
-                    btn.disabled = true;
-                    
-                    setTimeout(() => {
-                        alert("Demo payment completed successfully!\\n\\nIn production, this would redirect to RapidPay payment page.");
-                        window.location.href = "' . route('pay.request.success', ['token' => $moneyRequest->token]) . '";
-                    }, 2000);
-                }
-                </script>';
-            } else {
-                // Production mode - actual form submission
-                $formHtml = '<form id="rapidpay_form" action="' . ($payment->sandbox == 'true' ? 'https://sandbox.rapidpay.com/payment' : 'https://rapidpay.com/payment') . '" method="POST" style="display:none">
-                    <input type="hidden" name="merchant_id" value="' . htmlspecialchars($payment->key_secret) . '">
-                    <input type="hidden" name="transaction_id" value="' . htmlspecialchars($transactionId) . '">
-                    <input type="hidden" name="amount" value="' . htmlspecialchars($amountFixed) . '">
-                    <input type="hidden" name="currency" value="' . htmlspecialchars($this->settings->currency_code) . '">
-                    <input type="hidden" name="description" value="Money Request Payment">
-                    <input type="hidden" name="return_url" value="' . route('pay.request.success', ['token' => $moneyRequest->token]) . '">
-                    <input type="hidden" name="cancel_url" value="' . route('pay.request', ['token' => $moneyRequest->token]) . '">
-                    <input type="hidden" name="callback_url" value="' . url('/webhook/rapidpay') . '">
-                    <input type="hidden" name="customer_email" value="' . htmlspecialchars(auth()->check() ? auth()->user()->email : 'guest@example.com') . '">
-                    <input type="hidden" name="hash" value="' . $secureHash . '">
-                    <input type="hidden" name="money_request_id" value="' . $moneyRequest->id . '">
-                </form>
-                <script>
+            </div>
+
+            <!-- Hidden form for RapidPay submission -->
+            <form id="rapidpay_form" action="' . ($payment->sandbox == 'true' ? 'https://sandbox.rapidpay.com/payment' : 'https://rapidpay.com/payment') . '" method="POST" style="display:none">
+                <input type="hidden" name="merchant_id" value="' . htmlspecialchars($payment->key_secret) . '">
+                <input type="hidden" name="transaction_id" value="' . htmlspecialchars($transactionId) . '">
+                <input type="hidden" name="amount" value="' . htmlspecialchars($amountFixed) . '">
+                <input type="hidden" name="currency" value="' . htmlspecialchars($this->settings->currency_code) . '">
+                <input type="hidden" name="description" value="Money Request Payment">
+                <input type="hidden" name="return_url" value="' . route('pay.request.success', ['token' => $moneyRequest->token]) . '">
+                <input type="hidden" name="cancel_url" value="' . route('pay.request', ['token' => $moneyRequest->token]) . '">
+                <input type="hidden" name="callback_url" value="' . url('/webhook/rapidpay/money-request') . '">
+                <input type="hidden" name="customer_email" value="' . htmlspecialchars(auth()->check() ? auth()->user()->email : 'guest@example.com') . '">
+                <input type="hidden" name="customer_name" value="' . htmlspecialchars(auth()->check() ? auth()->user()->name : 'Guest') . '">
+                <input type="hidden" name="hash" value="' . $secureHash . '">
+                <input type="hidden" name="money_request_id" value="' . $moneyRequest->id . '">
+                <input type="hidden" name="type" value="money_request">
+            </form>
+            
+            <script>
+            function handleRapidPayProceed() {
+                const btn = document.getElementById("proceedToRapidPay");
+                btn.innerHTML = "<i class=\"fas fa-spinner fa-spin\" style=\"margin-right: 5px;\"></i>Processing...";
+                btn.disabled = true;
+                btn.style.opacity = "0.7";
+                
+                ' . ($payment->sandbox == 'true' ? '
+                setTimeout(() => {
+                    alert("Demo: Payment completed successfully!\\n\\nIn production, this would redirect to RapidPay payment page.");
+                    window.location.href = "' . route('pay.request.success', ['token' => $moneyRequest->token]) . '";
+                }, 2000);
+                ' : '
+                setTimeout(() => {
+                    document.getElementById("rapidPayModal").style.display = "none";
                     document.getElementById("rapidpay_form").submit();
-                </script>';
+                }, 1000);
+                ') . '
             }
+            </script>
+
+';
 
             return response()->json([
                 'success' => true,
-                'insertBody' => $formHtml
+                'insertBody' => $modalHtml
             ]);
 
         } catch (\Exception $e) {
@@ -1280,5 +1413,466 @@ class RequestMoneyController extends Controller
                           $apiKey;
         
         return hash_hmac('sha256', $signatureString, $apiKey);
+    }
+
+    /**
+     * Handle Paystack webhook for money requests
+     */
+    public function webhookPaystack(Request $request)
+    {
+        try {
+            $payment = PaymentGateways::whereName('Paystack')->firstOrFail();
+            
+            // Verify the webhook signature
+            $signature = $request->header('X-Paystack-Signature');
+            $body = $request->getContent();
+            $expectedSignature = hash_hmac('sha512', $body, $payment->key_secret);
+            
+            if (!hash_equals($expectedSignature, $signature)) {
+                \Log::warning('Paystack money request webhook signature verification failed');
+                return response('Unauthorized', 401);
+            }
+
+            $event = json_decode($body, true);
+            
+            if ($event['event'] === 'charge.success') {
+                $reference = $event['data']['reference'];
+                $metadata = $event['data']['metadata'];
+                
+                if (isset($metadata['money_request_id'])) {
+                    $moneyRequest = MoneyRequest::find($metadata['money_request_id']);
+                    
+                    if ($moneyRequest && $moneyRequest->status === 'pending') {
+                        // Update money request status
+                        $moneyRequest->update([
+                            'status' => 'completed',
+                            'payer_id' => $metadata['payer_id'] ?? null,
+                            'paid_at' => now()
+                        ]);
+
+                        // Add funds to requester
+                        $requester = User::find($moneyRequest->requester_id);
+                        if ($requester) {
+                            $requester->increment('balance', $moneyRequest->amount);
+
+                            // Create deposit record
+                            Deposits::create([
+                                'user_id' => $requester->id,
+                                'txn_id' => $reference,
+                                'amount' => $moneyRequest->amount,
+                                'payment_gateway' => 'Paystack',
+                                'status' => 'active',
+                                'date' => now()
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            return response('OK', 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Paystack money request webhook error: ' . $e->getMessage());
+            return response('Internal Server Error', 500);
+        }
+    }
+
+    /**
+     * Handle Mollie webhook for money requests
+     */
+    public function webhookMollie(Request $request)
+    {
+        try {
+            $paymentGateway = PaymentGateways::whereName('Mollie')->firstOrFail();
+
+            $mollie = new \Mollie\Api\MollieApiClient();
+            $mollie->setApiKey($paymentGateway->key);
+
+            if (!$request->has('id')) {
+                return response('Bad Request', 400);
+            }
+
+            $payment = $mollie->payments->get($request->id);
+
+            if ($payment->isPaid()) {
+                $metadata = $payment->metadata;
+                
+                if (isset($metadata->money_request_id)) {
+                    $moneyRequest = MoneyRequest::find($metadata->money_request_id);
+                    
+                    if ($moneyRequest && $moneyRequest->status === 'pending') {
+                        // Check if payment already processed
+                        $verifiedTxnId = Deposits::where('txn_id', $payment->id)->first();
+                        
+                        if (!$verifiedTxnId) {
+                            // Update money request status
+                            $moneyRequest->update([
+                                'status' => 'completed',
+                                'payer_id' => $metadata->payer_id ?? null,
+                                'paid_at' => now()
+                            ]);
+
+                            // Add funds to requester
+                            $requester = User::find($moneyRequest->requester_id);
+                            if ($requester) {
+                                $requester->increment('balance', $moneyRequest->amount);
+
+                                // Create deposit record
+                                Deposits::create([
+                                    'user_id' => $requester->id,
+                                    'txn_id' => $payment->id,
+                                    'amount' => $moneyRequest->amount,
+                                    'payment_gateway' => 'Mollie',
+                                    'status' => 'active',
+                                    'date' => now()
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return response('OK', 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Mollie money request webhook error: ' . $e->getMessage());
+            return response('Internal Server Error', 500);
+        }
+    }
+
+    /**
+     * Handle Coinbase webhook for money requests
+     */
+    public function webhookCoinbase(Request $request)
+    {
+        try {
+            $payment = PaymentGateways::whereName('Coinbase')->firstOrFail();
+            $payload = json_decode($request->getContent());
+            $signature = hash_hmac('sha256', $request->getContent(), $payment->key_secret);
+
+            if (hash_equals($signature, $request->server('HTTP_X_CC_WEBHOOK_SIGNATURE'))) {
+                $metadata = $payload->event->data->metadata ?? null;
+                
+                if (isset($metadata->money_request_id)) {
+                    if ($payload->event->type == 'charge:confirmed' || $payload->event->type == 'charge:resolved') {
+                        $paymentId = $payload->event->data->code;
+                        $moneyRequest = MoneyRequest::find($metadata->money_request_id);
+                        
+                        if ($moneyRequest && $moneyRequest->status === 'pending') {
+                            // Check if payment already processed
+                            $verifiedTxnId = Deposits::where('txn_id', $paymentId)->first();
+                            
+                            if (!$verifiedTxnId) {
+                                // Update money request status
+                                $moneyRequest->update([
+                                    'status' => 'completed',
+                                    'payer_id' => $metadata->payer_id ?? null,
+                                    'paid_at' => now()
+                                ]);
+
+                                // Add funds to requester
+                                $requester = User::find($moneyRequest->requester_id);
+                                if ($requester) {
+                                    $requester->increment('balance', $moneyRequest->amount);
+
+                                    // Create deposit record
+                                    Deposits::create([
+                                        'user_id' => $requester->id,
+                                        'txn_id' => $paymentId,
+                                        'amount' => $moneyRequest->amount,
+                                        'payment_gateway' => 'Coinbase',
+                                        'status' => 'active',
+                                        'date' => now()
+                                    ]);
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                \Log::info('Coinbase money request signature validation failed!');
+                return response('Unauthorized', 401);
+            }
+
+            return response('OK', 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Coinbase money request webhook error: ' . $e->getMessage());
+            return response('Internal Server Error', 500);
+        }
+    }
+
+    /**
+     * Handle NowPayments webhook for money requests
+     */
+    public function webhookNowPayments(Request $request)
+    {
+        try {
+            if (isset($_SERVER['HTTP_X_NOWPAYMENTS_SIG']) && !empty($_SERVER['HTTP_X_NOWPAYMENTS_SIG'])) {
+                $payment = PaymentGateways::whereName('NowPayments')->firstOrFail();
+                $ipn_secret = $payment->key_secret;
+                $recived_hmac = $_SERVER['HTTP_X_NOWPAYMENTS_SIG'];
+                $request_json = $request->getContent();
+                $response = json_decode($request_json, true);
+                ksort($response);
+                $sorted_request_json = json_encode($response, JSON_UNESCAPED_SLASHES);
+
+                if ($request_json !== false && !empty($request_json)) {
+                    $hmac = hash_hmac("sha512", $sorted_request_json, trim($ipn_secret));
+
+                    if (isset($response['payment_status']) && isset($response['payment_id']) && isset($response['order_id'])) {
+                        $paymentId = $response['payment_id'];
+                        $orderId = $response['order_id'];
+                        
+                        // Check if this is a money request payment
+                        if (strpos($orderId, 'MR-') === 0) {
+                            if ($response['payment_status'] === 'finished') {
+                                // Extract money request ID from order ID
+                                $moneyRequestId = str_replace('MR-', '', explode('-', $orderId)[1]);
+                                $moneyRequest = MoneyRequest::find($moneyRequestId);
+                                
+                                if ($moneyRequest && $moneyRequest->status === 'pending') {
+                                    // Check if payment already processed
+                                    $verifiedTxnId = Deposits::where('txn_id', $paymentId)->first();
+                                    
+                                    if (!$verifiedTxnId) {
+                                        // Update money request status
+                                        $moneyRequest->update([
+                                            'status' => 'completed',
+                                            'paid_at' => now()
+                                        ]);
+
+                                        // Add funds to requester
+                                        $requester = User::find($moneyRequest->requester_id);
+                                        if ($requester) {
+                                            $requester->increment('balance', $moneyRequest->amount);
+
+                                            // Create deposit record
+                                            Deposits::create([
+                                                'user_id' => $requester->id,
+                                                'txn_id' => $paymentId,
+                                                'amount' => $moneyRequest->amount,
+                                                'payment_gateway' => 'NowPayments',
+                                                'status' => 'active',
+                                                'date' => now()
+                                            ]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    \Log::info('NowPayments Money Request Error reading POST data');
+                }
+            } else {
+                \Log::info('NowPayments Money Request No HMAC signature sent.');
+            }
+
+            return response('OK', 200);
+
+        } catch (\Exception $e) {
+            \Log::error('NowPayments money request webhook error: ' . $e->getMessage());
+            return response('Internal Server Error', 500);
+        }
+    }
+
+    /**
+     * Handle Flutterwave webhook for money requests
+     */
+    public function webhookFlutterwave(Request $request)
+    {
+        try {
+            $payment = PaymentGateways::whereName('Flutterwave')->firstOrFail();
+            
+            // Verify the webhook signature
+            $signature = $request->header('verif-hash');
+            if (!$signature || $signature !== $payment->key_secret) {
+                \Log::warning('Flutterwave money request webhook signature verification failed');
+                return response('Unauthorized', 401);
+            }
+
+            $payload = $request->all();
+            
+            if ($payload['event'] === 'charge.completed' && $payload['data']['status'] === 'successful') {
+                $metadata = $payload['data']['meta'];
+                
+                if (isset($metadata['money_request_id'])) {
+                    $moneyRequest = MoneyRequest::find($metadata['money_request_id']);
+                    
+                    if ($moneyRequest && $moneyRequest->status === 'pending') {
+                        // Check if payment already processed
+                        $verifiedTxnId = Deposits::where('txn_id', $payload['data']['tx_ref'])->first();
+                        
+                        if (!$verifiedTxnId) {
+                            // Update money request status
+                            $moneyRequest->update([
+                                'status' => 'completed',
+                                'paid_at' => now()
+                            ]);
+
+                            // Add funds to requester
+                            $requester = User::find($moneyRequest->requester_id);
+                            if ($requester) {
+                                $requester->increment('balance', $moneyRequest->amount);
+
+                                // Create deposit record
+                                Deposits::create([
+                                    'user_id' => $requester->id,
+                                    'txn_id' => $payload['data']['tx_ref'],
+                                    'amount' => $moneyRequest->amount,
+                                    'payment_gateway' => 'Flutterwave',
+                                    'status' => 'active',
+                                    'date' => now()
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return response('OK', 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Flutterwave money request webhook error: ' . $e->getMessage());
+            return response('Internal Server Error', 500);
+        }
+    }
+
+    /**
+     * Handle Cardinity webhook for money requests
+     */
+    public function webhookCardinity(Request $request)
+    {
+        try {
+            $payment = PaymentGateways::whereName('Cardinity')->firstOrFail();
+
+            $message = '';
+            ksort($_POST);
+            $projectSecret = $payment->project_secret;
+            $params = $_POST;
+
+            $dataDecode = base64_decode($request->data);
+            parse_str($dataDecode, $data);
+
+            foreach ($_POST as $key => $value) {
+                if ($key == 'signature') continue;
+                $message .= $key . $value;
+            }
+
+            $signature = hash_hmac('sha256', $message, $projectSecret);
+
+            if ($signature == $_POST['signature']) {
+                if ($params['status'] == 'approved') {
+                    $paymentId = $params['id'];
+
+                    if ($data['type'] === 'money_request') {
+                        $moneyRequest = MoneyRequest::find($data['money_request_id']);
+                        
+                        if ($moneyRequest && $moneyRequest->status === 'pending') {
+                            // Check if payment already processed
+                            $verifiedTxnId = Deposits::where('txn_id', $paymentId)->first();
+                            
+                            if (!$verifiedTxnId) {
+                                // Update money request status
+                                $moneyRequest->update([
+                                    'status' => 'completed',
+                                    'payer_id' => $data['payer_id'] ?? null,
+                                    'paid_at' => now()
+                                ]);
+
+                                // Add funds to requester
+                                $requester = User::find($moneyRequest->requester_id);
+                                if ($requester) {
+                                    $requester->increment('balance', $moneyRequest->amount);
+
+                                    // Create deposit record
+                                    Deposits::create([
+                                        'user_id' => $requester->id,
+                                        'txn_id' => $paymentId,
+                                        'amount' => $moneyRequest->amount,
+                                        'payment_gateway' => 'Cardinity',
+                                        'status' => 'active',
+                                        'date' => now()
+                                    ]);
+                                }
+                            }
+                        }
+
+                        return redirect()->route('pay.request.success', ['token' => $moneyRequest->token]);
+                    }
+                } else {
+                    \Log::warning('Cardinity money request payment failed');
+                    return response('Payment failed', 400);
+                }
+            } else {
+                \Log::warning('Cardinity money request signature verification failed');
+                return response('Unauthorized', 401);
+            }
+
+            return response('OK', 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Cardinity money request webhook error: ' . $e->getMessage());
+            return response('Internal Server Error', 500);
+        }
+    }
+
+    /**
+     * Handle Binance webhook for money requests
+     */
+    public function webhookBinance(Request $request)
+    {
+        try {
+            $dataDecode = base64_decode($request->data);
+            parse_str($dataDecode, $data);
+
+            $requestJson = $request->getContent();
+            $response = json_decode($requestJson, true);
+
+            if ($response['returnCode'] == "SUCCESS") {
+                if ($data['type'] === 'money_request') {
+                    $moneyRequest = MoneyRequest::find($data['money_request_id']);
+                    
+                    if ($moneyRequest && $moneyRequest->status === 'pending') {
+                        // Check if payment already processed
+                        $verifiedTxnId = Deposits::where('txn_id', $data['id'])->first();
+                        
+                        if (!$verifiedTxnId) {
+                            // Update money request status
+                            $moneyRequest->update([
+                                'status' => 'completed',
+                                'payer_id' => $data['payer_id'] ?? null,
+                                'paid_at' => now()
+                            ]);
+
+                            // Add funds to requester
+                            $requester = User::find($moneyRequest->requester_id);
+                            if ($requester) {
+                                $requester->increment('balance', $moneyRequest->amount);
+
+                                // Create deposit record
+                                Deposits::create([
+                                    'user_id' => $requester->id,
+                                    'txn_id' => $data['id'],
+                                    'amount' => $moneyRequest->amount,
+                                    'payment_gateway' => 'Binance',
+                                    'status' => 'active',
+                                    'date' => now()
+                                ]);
+                            }
+                        }
+                    }
+                }
+            } else {
+                \Log::info('Binance money request error - ' . $response['returnMessage']);
+            }
+
+            return response('OK', 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Binance money request webhook error: ' . $e->getMessage());
+            return response('Internal Server Error', 500);
+        }
     }
 }

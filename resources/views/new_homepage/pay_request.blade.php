@@ -532,6 +532,31 @@ document.getElementById('paymentForm').addEventListener('submit', function(e) {
             if (data.url) {
                 // Redirect to payment gateway
                 window.location.href = data.url;
+            } else if (data.insertBody) {
+                // Handle modal/form insertion (for RapidPay, Paystack, etc.)
+                console.log('Inserting modal/form content');
+                
+                // Create a temporary container
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = data.insertBody;
+                
+                // Extract and append HTML content (without scripts)
+                const htmlContent = tempDiv.querySelector('#rapidPayModal') || tempDiv.firstElementChild;
+                if (htmlContent) {
+                    document.body.appendChild(htmlContent);
+                }
+                
+                // Extract and execute scripts separately
+                const scripts = tempDiv.querySelectorAll('script');
+                scripts.forEach(script => {
+                    try {
+                        // Execute the script content in global scope
+                        eval(script.textContent);
+                        console.log('Script executed successfully');
+                    } catch (error) {
+                        console.error('Error executing script:', error);
+                    }
+                });
             } else {
                 // Payment completed (wallet payment)
                 showSuccess(data.message);
