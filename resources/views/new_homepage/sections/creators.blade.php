@@ -18,10 +18,10 @@
                 </a>
                 <!-- Carousel Navigation -->
                 <div class="carousel-navigation">
-                    <button class="nav-btn prev-btn" data-carousel="recently-added">
+                    <button class="nav-btn prev-btn "style="border:2px solid gray; border-radius: 50%; color: gray; background-color: white;" data-carousel="recently-added">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <button class="nav-btn next-btn" data-carousel="recently-added">
+                    <button class="nav-btn next-btn"style="border:2px solid gray; border-radius: 50%; color: gray; background-color: white;" data-carousel="recently-added">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
@@ -104,7 +104,7 @@
 </div>
 
 {{-- Modern Creator Showcase - Featured Creators --}}
-<div class="modern-creator-showcase featured-showcase">
+<div class="modern-creator-showcase" style="padding-top: 0;">
     <div class="container-fluid">
         <div class="showcase-header">
             <div class="header-content">
@@ -123,10 +123,10 @@
                 </a>
                 <!-- Carousel Navigation -->
                 <div class="carousel-navigation">
-                    <button class="nav-btn prev-btn" data-carousel="featured">
+                    <button class="nav-btn prev-btn "style="border:2px solid gray; border-radius: 50%; color: gray; background-color: white;" data-carousel="featured">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <button class="nav-btn next-btn" data-carousel="featured">
+                    <button class="nav-btn next-btn" style="border:2px solid gray; border-radius: 50%; color: gray; background-color: white;" data-carousel="featured">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>

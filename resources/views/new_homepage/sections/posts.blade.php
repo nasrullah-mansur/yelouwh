@@ -1,5 +1,5 @@
 {{-- Modern Recent Posts Section --}}
-<div class="modern-posts-section">
+<div class="modern-posts-section" style="padding: 0;">
     <div class="container-fluid">
         <!-- Section Header -->
         <div class="posts-header">
@@ -19,10 +19,10 @@
                 </a>
                 <!-- Carousel Navigation -->
                 <div class="carousel-navigation">
-                    <button class="nav-btn prev-btn" data-carousel="recent-posts">
+                    <button class="nav-btn prev-btn" style="border:2px solid gray; border-radius: 50%; color: gray; background-color: white;" data-carousel="recent-posts">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <button class="nav-btn next-btn" data-carousel="recent-posts">
+                    <button class="nav-btn next-btn" style="border:2px solid gray; border-radius: 50%; color: gray; background-color: white;" data-carousel="recent-posts" >
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
@@ -41,11 +41,11 @@
                                     <div class="post-image {{ $post->locked == 'yes' ? 'blurred' : '' }}">
                                         @if($post->media->isNotEmpty() && $post->media->first())
                                             @php $media = $post->media->first(); @endphp
-                                            @if($media->type == 'image' && $media->image)
+                                            @if($media->type == 'image' && !empty($media->image))
                                                 <img src="{{ Helper::getFile(config('path.images').$media->image) }}" alt="{{ $post->title ?: 'Post Image' }}" />
-                                            @elseif($media->type == 'video' && $media->video_poster)
+                                            @elseif($media->type == 'video' && !empty($media->video_poster))
                                                 <img src="{{ Helper::getFile(config('path.videos').$media->video_poster) }}" alt="{{ $post->title ?: 'Video Thumbnail' }}" />
-                                            @elseif($media->type == 'video' && $media->video_embed)
+                                            @elseif($media->type == 'video' && !empty($media->video_embed))
                                                 @php
                                                     $videoId = '';
                                                     if (strpos($media->video_embed, 'youtube.com') !== false || strpos($media->video_embed, 'youtu.be') !== false) {
@@ -61,27 +61,42 @@
                                                     }
                                                 @endphp
                                                 <img src="{{ $thumbnailUrl }}" alt="{{ $post->title ?: 'Video Thumbnail' }}" />
-                                            @else
+                                            @elseif($media->type == 'video' && !empty($media->video))
+                                                <!-- For uploaded video files, try to show first frame or use default -->
                                                 @php
-                                                    $avatarPath = config('path.avatar').$post->creator->avatar;
-                                                    // Check both nested and regular directory structure
-                                                    $nestedPath = public_path('public/' . $avatarPath);
-                                                    $regularPath = public_path($avatarPath);
-                                                    $avatarExists = file_exists($nestedPath) || file_exists($regularPath);
-                                                    $avatarUrl = $avatarExists ? Helper::getFile($avatarPath) : asset('public/img/user.png');
+                                                    $videoPath = Helper::getFile(config('path.videos').$media->video);
+                                                    // For now, show default video thumbnail - could be enhanced to show video first frame
                                                 @endphp
-                                                <img src="{{ $avatarUrl }}" alt="{{ $post->creator->hide_name == 'yes' ? $post->creator->username : $post->creator->name }}" />
+                                                <img src="{{ asset('public/new_home_page/default-video.jpg') }}" alt="{{ $post->title ?: 'Video Thumbnail' }}" />
+                                            @elseif($media->type == 'music' && !empty($media->music))
+                                                <!-- For music files, show default music thumbnail -->
+                                                <img src="{{ asset('public/new_home_page/default-music.jpg') }}" alt="{{ $post->title ?: 'Music Track' }}" />
+                                            @elseif($media->type == 'file' && !empty($media->file))
+                                                <!-- For file uploads, show default file thumbnail -->
+                                                <img src="{{ asset('public/new_home_page/default-post.jpg') }}" alt="{{ $post->title ?: 'File Content' }}" />
+                                            @else
+                                                <!-- Fallback: show post description as text overlay on default background -->
+                                                @if(!empty($post->description))
+                                                    <div class="text-post-preview">
+                                                        <div class="text-content">
+                                                            {{ Str::limit(strip_tags($post->description), 100) }}
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <img src="{{ asset('public/new_home_page/default-post.jpg') }}" alt="{{ $post->title ?: 'Post Content' }}" />
+                                                @endif
                                             @endif
                                         @else
-                                            @php
-                                                $avatarPath = config('path.avatar').$post->creator->avatar;
-                                                // Check both nested and regular directory structure
-                                                $nestedPath = public_path('public/' . $avatarPath);
-                                                $regularPath = public_path($avatarPath);
-                                                $avatarExists = file_exists($nestedPath) || file_exists($regularPath);
-                                                $avatarUrl = $avatarExists ? Helper::getFile($avatarPath) : asset('public/img/user.png');
-                                            @endphp
-                                            <img src="{{ $avatarUrl }}" alt="{{ $post->creator->hide_name == 'yes' ? $post->creator->username : $post->creator->name }}" />
+                                            <!-- No media available, show post description as text or default image -->
+                                            @if(!empty($post->description))
+                                                <div class="text-post-preview">
+                                                    <div class="text-content">
+                                                        {{ Str::limit(strip_tags($post->description), 100) }}
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <img src="{{ asset('public/new_home_page/default-post.jpg') }}" alt="{{ $post->title ?: 'Post Content' }}" />
+                                            @endif
                                         @endif
                                     </div>
                                     

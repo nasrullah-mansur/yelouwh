@@ -51,20 +51,7 @@
                             <div class="hero-visual">
                                 <div class="hero-image-container">
                                     <img src="{{asset('public/new_home_page/3man.png')}}" alt="Creators" class="hero-image">
-                                    <div class="floating-cards">
-                                        <div class="floating-card card-1">
-                                            <i class="fas fa-heart"></i>
-                                            <span>1.2K Likes</span>
-                                        </div>
-                                        <div class="floating-card card-2">
-                                            <i class="fas fa-dollar-sign"></i>
-                                            <span>$2,500</span>
-                                        </div>
-                                        <div class="floating-card card-3">
-                                            <i class="fas fa-users"></i>
-                                            <span>850 Fans</span>
-                                        </div>
-                                    </div>
+                                
                                 </div>
                             </div>
                         </div>
@@ -123,20 +110,7 @@
                             <div class="hero-visual">
                                 <div class="hero-image-container">
                                     <img src="{{asset('public/new_home_page/3man.png')}}" alt="Premium Features" class="hero-image">
-                                    <div class="floating-cards">
-                                        <div class="floating-card card-1">
-                                            <i class="fas fa-chart-line"></i>
-                                            <span>+125% Growth</span>
-                                        </div>
-                                        <div class="floating-card card-2">
-                                            <i class="fas fa-crown"></i>
-                                            <span>Premium</span>
-                                        </div>
-                                        <div class="floating-card card-3">
-                                            <i class="fas fa-shield-alt"></i>
-                                            <span>Secure</span>
-                                        </div>
-                                    </div>
+                                  
                                 </div>
                             </div>
                         </div>
@@ -189,20 +163,7 @@
                             <div class="hero-visual">
                                 <div class="hero-image-container">
                                     <img src="{{asset('public/new_home_page/3man.png')}}" alt="Community" class="hero-image">
-                                    <div class="floating-cards">
-                                        <div class="floating-card card-1">
-                                            <i class="fas fa-globe-americas"></i>
-                                            <span>150+ Countries</span>
-                                        </div>
-                                        <div class="floating-card card-2">
-                                            <i class="fas fa-comments"></i>
-                                            <span>Live Chat</span>
-                                        </div>
-                                        <div class="floating-card card-3">
-                                            <i class="fas fa-handshake"></i>
-                                            <span>Partnerships</span>
-                                        </div>
-                                    </div>
+                                
                                 </div>
                             </div>
                         </div>
@@ -227,10 +188,5 @@
         <button class="indicator active" data-slide="0"></button>
         <button class="indicator" data-slide="1"></button>
         <button class="indicator" data-slide="2"></button>
-    </div>
-
-    <!-- Progress Bar -->
-    <div class="hero-progress">
-        <div class="progress-bar"></div>
     </div>
 </div> 

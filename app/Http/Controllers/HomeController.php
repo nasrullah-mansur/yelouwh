@@ -180,12 +180,9 @@ class HomeController extends Controller
           }
         })
         ->orderBy('id', 'desc')
-        ->select([
-          'id', 'title', 'description', 'user_id', 'date', 'locked', 'price', 'status'
-        ])
         ->with([
           'creator:id,name,username,avatar,hide_name,verified_id,posts_privacy',
-          'media' => fn($q) => $q->select('id', 'updates_id', 'type', 'image', 'video', 'video_poster', 'video_embed')->where('status', 'active')->limit(1),
+          'media',
           'likes:id,updates_id',
           'comments:id,updates_id'
         ])

@@ -429,6 +429,14 @@
               </li><!-- /end list -->
               @endif
 
+              @if (auth()->user()->hasPermission('categories'))
+              <li class="nav-item">
+                  <a href="{{ url('panel/admin/homepage-galleries') }}" class="nav-link text-truncate @if (request()->is('panel/admin/homepage-galleries*')) active @endif">
+                      <i class="bi-grid-3x3-gap me-2"></i> Homepage Galleries
+                  </a>
+              </li><!-- /end list -->
+              @endif
+
               @if (auth()->user()->hasPermission('pages'))
               <li class="nav-item">
                   <a href="{{ url('panel/admin/pages') }}" class="nav-link text-truncate @if (request()->is('panel/admin/pages')) active @endif">

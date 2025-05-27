@@ -68,6 +68,10 @@ use App\Http\Controllers\UploadMediaWelcomeMessageController;
  */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/simulator', [HomeController::class, 'simulator'])->name('home.simulator');
+
+// Homepage Gallery Routes
+Route::get('/homepage-gallery/{slug}', [App\Http\Controllers\HomepageGalleryController::class, 'show'])->name('homepage-gallery.show');
+Route::get('/api/homepage-galleries', [App\Http\Controllers\HomepageGalleryController::class, 'apiIndex'])->name('api.homepage-galleries');
 Route::get('/request/money', [RequestMoneyController::class, 'request_money'])->name('request.money');
 Route::post('/request/money', [RequestMoneyController::class, 'request_money_post'])->name('request.money.post');
 
@@ -833,6 +837,11 @@ Route::group(['middleware' => 'private.content'], function() {
 		Route::view('/ffmpeg', 'admin.ffmpeg');
 
 		Route::get('/download/logs', [AdminController::class, 'downloadLogs']);
+
+		// Homepage Galleries
+		Route::resource('/homepage-galleries', App\Http\Controllers\Admin\HomepageGalleryController::class);
+		Route::patch('/homepage-galleries/{homepageGallery}/toggle-status', [App\Http\Controllers\Admin\HomepageGalleryController::class, 'toggleStatus'])->name('homepage-galleries.toggle-status');
+		Route::post('/homepage-galleries/update-order', [App\Http\Controllers\Admin\HomepageGalleryController::class, 'updateOrder'])->name('homepage-galleries.update-order');
 	});	
 
  });
@@ -1033,3 +1042,5 @@ Route::any('webhook/binance', [AddFundsController::class, 'webhookBinance'])->na
 // RapidPay
 Route::any('webhook/rapidpay', [RequestMoneyController::class, 'webhookRapidPay'])->name('webhook.rapidpay');
 Route::any('webhook/rapidpay/deposit', [AddFundsController::class, 'webhookRapidPayDeposit'])->name('webhook.rapidpay.deposit');
+
+
