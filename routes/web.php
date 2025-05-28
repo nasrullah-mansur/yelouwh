@@ -72,6 +72,10 @@ Route::get('/simulator', [HomeController::class, 'simulator'])->name('home.simul
 // Homepage Gallery Routes
 Route::get('/homepage-gallery/{slug}', [App\Http\Controllers\HomepageGalleryController::class, 'show'])->name('homepage-gallery.show');
 Route::get('/api/homepage-galleries', [App\Http\Controllers\HomepageGalleryController::class, 'apiIndex'])->name('api.homepage-galleries');
+
+// Hero Slides API Routes
+Route::get('/api/hero-slides', [App\Http\Controllers\HeroSlideController::class, 'apiIndex'])->name('api.hero-slides');
+
 Route::get('/request/money', [RequestMoneyController::class, 'request_money'])->name('request.money');
 Route::post('/request/money', [RequestMoneyController::class, 'request_money_post'])->name('request.money.post');
 
@@ -842,6 +846,11 @@ Route::group(['middleware' => 'private.content'], function() {
 		Route::resource('/homepage-galleries', App\Http\Controllers\Admin\HomepageGalleryController::class);
 		Route::patch('/homepage-galleries/{homepageGallery}/toggle-status', [App\Http\Controllers\Admin\HomepageGalleryController::class, 'toggleStatus'])->name('homepage-galleries.toggle-status');
 		Route::post('/homepage-galleries/update-order', [App\Http\Controllers\Admin\HomepageGalleryController::class, 'updateOrder'])->name('homepage-galleries.update-order');
+
+		// Hero Slides
+		Route::resource('/hero-slides', App\Http\Controllers\Admin\HeroSlideController::class);
+		Route::patch('/hero-slides/{heroSlide}/toggle-status', [App\Http\Controllers\Admin\HeroSlideController::class, 'toggleStatus'])->name('hero-slides.toggle-status');
+		Route::post('/hero-slides/update-order', [App\Http\Controllers\Admin\HeroSlideController::class, 'updateOrder'])->name('hero-slides.update-order');
 	});	
 
  });

@@ -1622,7 +1622,7 @@ a:hover {
 
                 .col-lg-6:last-child {
                     @media (max-width: 768px) {
-                        display: none !important;
+                        display: flex !important;
                     }
 
                     @media (max-width: 576px) {
@@ -2112,7 +2112,6 @@ a:hover {
                             margin-bottom: -30px;
                             object-fit: contain;
                             object-position: bottom center;
-                            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
                             animation: float 6s ease-in-out infinite;
                             z-index: 2;
                             position: relative;

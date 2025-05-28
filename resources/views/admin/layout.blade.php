@@ -437,6 +437,14 @@
               </li><!-- /end list -->
               @endif
 
+              @if (auth()->user()->hasPermission('categories'))
+              <li class="nav-item">
+                  <a href="{{ url('panel/admin/hero-slides') }}" class="nav-link text-truncate @if (request()->is('panel/admin/hero-slides*')) active @endif">
+                      <i class="bi-images me-2"></i> Hero Slides
+                  </a>
+              </li><!-- /end list -->
+              @endif
+
               @if (auth()->user()->hasPermission('pages'))
               <li class="nav-item">
                   <a href="{{ url('panel/admin/pages') }}" class="nav-link text-truncate @if (request()->is('panel/admin/pages')) active @endif">
