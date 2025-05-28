@@ -104,7 +104,7 @@
 </div>
 
 {{-- Modern Creator Showcase - Featured Creators --}}
-<div class="modern-creator-showcase" style="padding-top: 0;">
+<div class="modern-creator-showcase">
     <div class="container-fluid">
         <div class="showcase-header">
             <div class="header-content">
@@ -194,3 +194,16 @@
         </div>
     </div>
 </div> 
+
+<style>
+/* Consistent Section Spacing */
+.modern-creator-showcase {
+    margin: 60px 0;
+}
+
+@media (max-width: 768px) {
+    .modern-creator-showcase {
+        margin: 40px 0;
+    }
+}
+</style> 

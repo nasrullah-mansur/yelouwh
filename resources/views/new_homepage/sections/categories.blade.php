@@ -79,3 +79,16 @@
         </div>
     </div>
 </div> 
+
+<style>
+/* Consistent Section Spacing */
+.modern-category-section {
+    margin: 60px 0;
+}
+
+@media (max-width: 768px) {
+    .modern-category-section {
+        margin: 40px 0;
+    }
+}
+</style> 

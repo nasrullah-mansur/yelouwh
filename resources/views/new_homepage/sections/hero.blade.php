@@ -104,6 +104,16 @@
 
 <style>
 /* Enhanced Responsive Hero Styles - Full Image Display */
+.hero-banner-slider {
+    margin: 60px 0;
+}
+
+@media (max-width: 768px) {
+    .hero-banner-slider {
+        margin: 40px 0;
+    }
+}
+
 .hero-image-container {
     position: relative;
     width: 100%;
@@ -424,4 +434,3 @@
         justify-content: center !important;
     }
 }
-</style>

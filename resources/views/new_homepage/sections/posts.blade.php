@@ -1,5 +1,5 @@
 {{-- Modern Recent Posts Section --}}
-<div class="modern-posts-section" style="padding: 0;">
+<div class="modern-posts-section">
     <div class="container-fluid">
         <!-- Section Header -->
         <div class="posts-header">
