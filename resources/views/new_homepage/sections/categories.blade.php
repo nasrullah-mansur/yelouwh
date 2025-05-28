@@ -6,14 +6,13 @@
 <div class="modern-category-section">
     <div class="container-fluid">
         <!-- Section Header -->
-        <div class="section-header ">
-            <div class="section-title-wrapper">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="section-title-wrapper" style="display: flex; flex-direction: column;">
                 <h2 class="section-title">
                     <span class="title-icon" style="width: 60px; height: 60px;">
                         <i class="fas fa-compass"></i>
                     </span>
                     {{ __('sections.explore_categories') }}
-                    <span class="title-accent"></span>
                 </h2>
                 <p class="section-subtitle">{{ __('sections.discover_content') }}</p>
             </div>

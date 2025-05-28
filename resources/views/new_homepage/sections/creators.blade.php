@@ -18,10 +18,10 @@
                 </a>
                 <!-- Carousel Navigation -->
                 <div class="carousel-navigation">
-                    <button class="nav-btn prev-btn "style="border:2px solid gray; border-radius: 50%; color: gray; background-color: white;" data-carousel="recently-added">
+                    <button class="nav-btn prev-btn" data-carousel="recently-added">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <button class="nav-btn next-btn"style="border:2px solid gray; border-radius: 50%; color: gray; background-color: white;" data-carousel="recently-added">
+                    <button class="nav-btn next-btn" data-carousel="recently-added">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
@@ -123,10 +123,10 @@
                 </a>
                 <!-- Carousel Navigation -->
                 <div class="carousel-navigation">
-                    <button class="nav-btn prev-btn "style="border:2px solid gray; border-radius: 50%; color: gray; background-color: white;" data-carousel="featured">
+                    <button class="nav-btn prev-btn" data-carousel="featured">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <button class="nav-btn next-btn" style="border:2px solid gray; border-radius: 50%; color: gray; background-color: white;" data-carousel="featured">
+                    <button class="nav-btn next-btn" data-carousel="featured">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
