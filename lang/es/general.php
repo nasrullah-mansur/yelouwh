@@ -1400,4 +1400,22 @@ return array(
 	'write_short_message' => 'Escribe un mensaje corto (opcional)',
 	'allow_comments' => 'Permitir comentarios en tus publicaciones',
 	'comments_disabled' => 'Los comentarios han sido desactivados',
+
+	// Sidebar translations
+	'explore' => 'Explorar',
+	'categories' => 'Categorías',
+	'tools' => 'Herramientas',
+	'simulator' => 'Simulador',
+	'pro' => 'Pro',
+	'hot' => 'Popular',
+	'featured' => 'Destacado',
+	'more_active' => 'Más Activo',
+	'new' => 'Nuevo',
+	'free' => 'Gratis',
+	'go_premium' => 'Hazte Premium',
+	'unlock_exclusive_features' => 'Desbloquea funciones y contenido exclusivo',
+	'upgrade_now' => 'Actualizar Ahora',
+	'search' => 'Buscar',
+	'creators' => 'Creadores',
+	'free_subscription' => 'Suscripción Gratuita',
 );

@@ -19,7 +19,7 @@
             <div class="search-container">
                 <div class="search-input-wrapper">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Search creators, categories..." />
+                    <input type="text" class="search-input" placeholder="{{ __('general.search') }}..." />
                     <button class="search-filter-btn">
                         <i class="fas fa-sliders-h"></i>
                     </button>
@@ -36,22 +36,121 @@
         <div class="header-right">
             <div class="header-actions">
         
-                <!-- Language -->
+  <!-- Language -->
+                @if ($languages->count() > 1)
                 <div class="action-item language">
-                    <button class="action-btn">
+                    <button class="action-btn language-toggle" id="language-toggle">
                         <i class="fas fa-globe"></i>
+                        <span class="current-lang">
+                            @foreach ($languages as $language)
+                                @if ($language->abbreviation == config('app.locale'))
+                                    {{ strtoupper($language->abbreviation) }}
+                                @endif
+                            @endforeach
+                        </span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
                     </button>
+                    <div class="language-dropdown" id="language-dropdown">
+                        @foreach ($languages as $language)
+                        <div class="language-option @if ($language->abbreviation == config('app.locale')) active @endif" data-lang="{{ $language->abbreviation }}">
+                            <span class="flag">
+                                @if ($language->abbreviation == 'en')
+                                    🇺🇸
+                                @elseif ($language->abbreviation == 'es')
+                                    🇪🇸
+                                @elseif ($language->abbreviation == 'fr')
+                                    🇫🇷
+                                @elseif ($language->abbreviation == 'de')
+                                    🇩🇪
+                                @elseif ($language->abbreviation == 'it')
+                                    🇮🇹
+                                @elseif ($language->abbreviation == 'pt')
+                                    🇵🇹
+                                @elseif ($language->abbreviation == 'ru')
+                                    🇷🇺
+                                @elseif ($language->abbreviation == 'ja')
+                                    🇯🇵
+                                @elseif ($language->abbreviation == 'ko')
+                                    🇰🇷
+                                @elseif ($language->abbreviation == 'zh')
+                                    🇨🇳
+                                @elseif ($language->abbreviation == 'ar')
+                                    🇸🇦
+                                @elseif ($language->abbreviation == 'hi')
+                                    🇮🇳
+                                @elseif ($language->abbreviation == 'nl')
+                                    🇳🇱
+                                @elseif ($language->abbreviation == 'sv')
+                                    🇸🇪
+                                @elseif ($language->abbreviation == 'da')
+                                    🇩🇰
+                                @elseif ($language->abbreviation == 'no')
+                                    🇳🇴
+                                @elseif ($language->abbreviation == 'fi')
+                                    🇫🇮
+                                @elseif ($language->abbreviation == 'pl')
+                                    🇵🇱
+                                @elseif ($language->abbreviation == 'tr')
+                                    🇹🇷
+                                @elseif ($language->abbreviation == 'el')
+                                    🇬🇷
+                                @elseif ($language->abbreviation == 'he')
+                                    🇮🇱
+                                @elseif ($language->abbreviation == 'th')
+                                    🇹🇭
+                                @elseif ($language->abbreviation == 'vi')
+                                    🇻🇳
+                                @elseif ($language->abbreviation == 'id')
+                                    🇮🇩
+                                @elseif ($language->abbreviation == 'ms')
+                                    🇲🇾
+                                @elseif ($language->abbreviation == 'tl')
+                                    🇵🇭
+                                @elseif ($language->abbreviation == 'uk')
+                                    🇺🇦
+                                @elseif ($language->abbreviation == 'cs')
+                                    🇨🇿
+                                @elseif ($language->abbreviation == 'sk')
+                                    🇸🇰
+                                @elseif ($language->abbreviation == 'hu')
+                                    🇭🇺
+                                @elseif ($language->abbreviation == 'ro')
+                                    🇷🇴
+                                @elseif ($language->abbreviation == 'bg')
+                                    🇧🇬
+                                @elseif ($language->abbreviation == 'hr')
+                                    🇭🇷
+                                @elseif ($language->abbreviation == 'sr')
+                                    🇷🇸
+                                @elseif ($language->abbreviation == 'sl')
+                                    🇸🇮
+                                @elseif ($language->abbreviation == 'et')
+                                    🇪🇪
+                                @elseif ($language->abbreviation == 'lv')
+                                    🇱🇻
+                                @elseif ($language->abbreviation == 'lt')
+                                    🇱🇹
+                                @else
+                                    🌐
+                                @endif
+                            </span>
+                            <span class="lang-name">{{ $language->name }}</span>
+                            <span class="lang-code">{{ strtoupper($language->abbreviation) }}</span>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
+                @endif
 
                 <!-- Auth Buttons -->
                 <div class="auth-buttons">
                     <a href="{{ url('/login') }}" class="btn-signin">
                         <i class="fas fa-sign-in-alt"></i>
-                        Sign In
+                        {{ __('auth.login') }}
                     </a>
                     <a href="{{ url('/register') }}" class="btn-signup">
                         <i class="fas fa-rocket"></i>
-                        Get Started
+                        {{ __('auth.sign_up') }}
                     </a>
                 </div>
 
@@ -70,19 +169,19 @@
     <div class="mobile-search-overlay">
         <div class="mobile-search-container">
             <div class="mobile-search-header">
-                <h3>Search</h3>
+                <h3>{{ __('general.search') }}</h3>
                 <button class="close-search">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="mobile-search-input">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search creators, categories..." />
+                <input type="text" placeholder="{{ __('general.search') }}..." />
             </div>
             <div class="mobile-search-suggestions">
-                <h4>Popular Searches</h4>
+                <h4>{{ __('general.popular') }} {{ __('general.search') }}</h4>
                 <div class="suggestion-tags">
-                    <span class="tag">Popular Creators</span>
+                    <span class="tag">{{ __('general.popular') }} {{ __('general.creators') }}</span>
                     <span class="tag">Animation</span>
                     <span class="tag">Photography</span>
                     <span class="tag">Design</span>

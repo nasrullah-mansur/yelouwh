@@ -626,8 +626,8 @@
             }
             
             .view-all-btn {
-                background: linear-gradient(45deg, #4ade80, #22c55e);
                 color: #fff;
+                background: linear-gradient(135deg, #ffb200, #ff8c00) !important;
                 text-decoration: none;
                 padding: 10px 20px;
                 border-radius: 25px;
@@ -837,6 +837,68 @@
         // Toggle live streams dropdown (you can implement this)
         console.log('Live status clicked');
     });
+
+    // Language Dropdown Functionality
+    const languageToggle = document.getElementById('language-toggle');
+    const languageDropdown = document.getElementById('language-dropdown');
+    const languageOptions = document.querySelectorAll('.language-option');
+    const currentLangSpan = document.querySelector('.current-lang');
+
+    // Toggle dropdown
+    if (languageToggle && languageDropdown) {
+        languageToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Toggle dropdown visibility
+            languageDropdown.classList.toggle('active');
+            languageToggle.classList.toggle('active');
+        });
+
+        // Handle language selection
+        languageOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Get selected language
+                const selectedLang = this.getAttribute('data-lang');
+                const currentLang = '{{ config("app.locale") }}';
+                
+                // Only redirect if different language is selected
+                if (selectedLang !== currentLang) {
+                    // Show loading state
+                    languageToggle.classList.add('loading');
+                    if (currentLangSpan) {
+                        currentLangSpan.textContent = '...';
+                    }
+                    
+                    // Redirect to language change URL
+                    window.location.href = '{{ url("change/lang") }}/' + selectedLang;
+                } else {
+                    // Close dropdown if same language is selected
+                    languageDropdown.classList.remove('active');
+                    languageToggle.classList.remove('active');
+                }
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!languageToggle.contains(e.target) && !languageDropdown.contains(e.target)) {
+                languageDropdown.classList.remove('active');
+                languageToggle.classList.remove('active');
+            }
+        });
+
+        // Close dropdown on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                languageDropdown.classList.remove('active');
+                languageToggle.classList.remove('active');
+            }
+        });
+    }
 
     // Hero Banner Slider Functionality
     let currentSlide = 0;

@@ -1399,4 +1399,22 @@ return array(
 		'write_short_message' => 'Write a short message (optional)',
 		'allow_comments' => 'Allow comments on your posts',
 		'comments_disabled' => 'Comments have been disabled',
+
+	// Sidebar translations
+	'explore' => 'Explore',
+	'categories' => 'Categories',
+	'tools' => 'Tools',
+	'simulator' => 'Simulator',
+	'pro' => 'Pro',
+	'hot' => 'Hot',
+	'featured' => 'Featured',
+	'more_active' => 'More Active',
+	'new' => 'New',
+	'free' => 'Free',
+	'go_premium' => 'Go Premium',
+	'unlock_exclusive_features' => 'Unlock exclusive features and content',
+	'upgrade_now' => 'Upgrade Now',
+	'search' => 'Search',
+	'creators' => 'Creators',
+	'free_subscription' => 'Free Subscription',
 );

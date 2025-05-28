@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title') YE Simulator - Calculate Your Earnings @endsection
+@section('title') {{ __('simulator.title') }} @endsection
 
 @section('content')
 <style>
@@ -471,8 +471,8 @@
           <div class="calculator-icon">
             <i class="fas fa-calculator"></i>
           </div>
-          <h1>YE Simulator</h1>
-          <p>Calculate your potential earnings with our advanced simulator</p>
+          <h1>{{ __('simulator.ye_simulator') }}</h1>
+          <p>{{ __('simulator.description') }}</p>
         </div>
       </div>
     </div>
@@ -486,7 +486,7 @@
           <div class="form-container">
             <h2>
               <i class="fas fa-chart-line" style="color: #ffb200; margin-right: 10px;"></i>
-              Calculate Your Earnings
+              {{ __('simulator.calculate_earnings') }}
             </h2>
             <form id="calculateForm">
               <!-- Laravel CSRF Token -->
@@ -495,41 +495,41 @@
               <div class="form-group">
                 <label for="content_amount">
                   <i class="fas fa-hashtag" style="color: #ffb200; margin-right: 8px;"></i>
-                  Content Amount
+                  {{ __('simulator.content_amount') }}
                 </label>
                 <div class="input-wrapper">
                   <div class="input-icon">
                     <i class="fas fa-hashtag"></i>
                   </div>
-                  <input type="number" id="content_amount" name="content_amount" step="0.01" placeholder="Enter content amount" required>
+                  <input type="number" id="content_amount" name="content_amount" step="0.01" placeholder="{{ __('simulator.enter_content_amount') }}" required>
                 </div>
                 <div id="amount_error" class="error-message d-none">
                   <i class="fas fa-exclamation-triangle"></i>
-                  Please enter a valid amount
+                  {{ __('simulator.valid_amount_error') }}
                 </div>
               </div>
 
               <div class="form-group">
                 <label for="sale_price">
                   <i class="fas fa-dollar-sign" style="color: #ffb200; margin-right: 8px;"></i>
-                  Content Sale Price (USD)
+                  {{ __('simulator.content_sale_price') }}
                 </label>
                 <div class="input-wrapper">
                   <div class="input-icon">
                     <i class="fas fa-dollar-sign"></i>
                   </div>
-                  <input type="number" id="sale_price" name="content_sale_price" step="0.01" placeholder="Enter sale price" required>
+                  <input type="number" id="sale_price" name="content_sale_price" step="0.01" placeholder="{{ __('simulator.enter_sale_price') }}" required>
                 </div>
                 <div id="price_error" class="error-message d-none">
                   <i class="fas fa-exclamation-triangle"></i>
-                  Please enter a valid price
+                  {{ __('simulator.valid_price_error') }}
                 </div>
               </div>
 
               <button id="calculate_btn" type="submit" class="calculate-btn">
                 <div class="loading-spinner"></div>
                 <i class="fas fa-calculator"></i>
-                Calculate Earnings
+                {{ __('simulator.calculate_earnings_btn') }}
               </button>
             </form>
           </div>
@@ -539,13 +539,13 @@
           <div class="summary-container">
             <h2>
               <i class="fas fa-chart-pie" style="color: #00d4aa; margin-right: 10px;"></i>
-              Earnings Breakdown
+              {{ __('simulator.earnings_breakdown') }}
             </h2>
             <table class="summary-table">
               <tr>
                 <td>
                   <i class="fas fa-hashtag" style="color: #ffb200; margin-right: 8px;"></i>
-                  Content Amount
+                  {{ __('simulator.content_amount') }}
                 </td>
                 <td>
                   <span class="currency-symbol">×</span><span id="amount">0</span>
@@ -554,7 +554,7 @@
               <tr>
                 <td>
                   <i class="fas fa-tag" style="color: #3498db; margin-right: 8px;"></i>
-                  Content Sale Price
+                  {{ __('simulator.content_sale_price') }}
                 </td>
                 <td>
                   <span class="currency-symbol">$</span><span id="price">0.00</span>
@@ -563,8 +563,8 @@
               <tr>
                 <td>
                   <i class="fas fa-credit-card" style="color: #e74c3c; margin-right: 8px;"></i>
-                  RapidPay Fee
-                  <span class="fee-badge">Fee</span>
+                  {{ __('simulator.rapidpay_fee') }}
+                  <span class="fee-badge">{{ __('simulator.fee') }}</span>
                 </td>
                 <td>
                   <span class="currency-symbol">$</span>10.25
@@ -573,8 +573,8 @@
               <tr>
                 <td>
                   <i class="fas fa-percentage" style="color: #9b59b6; margin-right: 8px;"></i>
-                  Yelouwh Commission
-                  <span class="commission-badge">Platform</span>
+                  {{ __('simulator.yelouwh_commission') }}
+                  <span class="commission-badge">{{ __('simulator.platform') }}</span>
                 </td>
                 <td>
                   <span class="currency-symbol">$</span>20.00
@@ -583,8 +583,8 @@
               <tr style='background: linear-gradient(135deg, rgba(255, 178, 0, 0.1), rgba(255, 140, 0, 0.1)) !important;'>
                 <td style="width: 100%;">
                   <i class="fas fa-trophy" style="color: #00d4aa; margin-right: 8px;"></i>
-                  Your Total Earnings
-                  <span class="earning-badge">Profit</span>
+                  {{ __('simulator.total_earnings') }}
+                  <span class="earning-badge">{{ __('simulator.profit') }}</span>
                 </td>
                 <td class="highlight">
                   <span class="currency-symbol">$</span><span id="total_earning">0.00</span>

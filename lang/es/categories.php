@@ -12,10 +12,10 @@ return array(
 	"artist" => "Artista",
 	"designer" => "Diseñador",
 	"developer" => "Desarrollador",
-	"drawing-and-painting" => "Dibujar y Pintar",
+	"drawing_painting" => "Dibujar y Pintar",
 	"others" => "Otros",
 	"photography" => "Fotografía",
-	"podcasts" => "Podcasts",
-	"video-and-film" => "Vídeo y Cine",
+	"podcast" => "Podcasts",
+	"video_film" => "Vídeo y Cine",
 	"writing" => "Escritura",
 );

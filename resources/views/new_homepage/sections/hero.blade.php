@@ -11,38 +11,37 @@
                             <div class="hero-text">
                                 <div class="hero-badge">
                                     <i class="fas fa-star"></i>
-                                    <span>Featured Platform</span>
+                                    <span>{{ __('hero.featured_platform') }}</span>
                                 </div>
                                 <h1 class="hero-title">
-                                    Support Your Favorite
-                                    <span class="gradient-text">Creators</span>
+                                    {{ __('hero.support_favorite') }}
+                                    <span class="gradient-text">{{ __('hero.creators') }}</span>
                                 </h1>
                                 <p class="hero-description">
-                                    Join thousands of creators and supporters in the ultimate content creation platform. 
-                                    Discover amazing content, support creators, and build your community.
+                                    {{ __('hero.join_description') }}
                                 </p>
                                 <div class="hero-stats">
                                     <div class="stat-item">
                                         <span class="stat-number">50K+</span>
-                                        <span class="stat-label">Creators</span>
+                                        <span class="stat-label">{{ __('hero.creators') }}</span>
                                     </div>
                                     <div class="stat-item">
                                         <span class="stat-number">1M+</span>
-                                        <span class="stat-label">Supporters</span>
+                                        <span class="stat-label">{{ __('hero.supporters') }}</span>
                                     </div>
                                     <div class="stat-item">
                                         <span class="stat-number">$10M+</span>
-                                        <span class="stat-label">Earned</span>
+                                        <span class="stat-label">{{ __('hero.earned') }}</span>
                                     </div>
                                 </div>
                                 <div class="hero-actions">
                                     <a href="{{ url('/register') }}" class="btn-hero-primary">
                                         <i class="fas fa-rocket"></i>
-                                        Start Creating
+                                        {{ __('hero.start_creating') }}
                                     </a>
                                     <a href="{{ url('/creators') }}" class="btn-hero-secondary">
                                         <i class="fas fa-play"></i>
-                                        Explore Creators
+                                        {{ __('hero.explore_creators') }}
                                     </a>
                                 </div>
                             </div>
@@ -50,7 +49,7 @@
                         <div class="col-lg-6">
                             <div class="hero-visual">
                                 <div class="hero-image-container">
-                                    <img src="{{asset('public/new_home_page/3man.png')}}" alt="Creators" class="hero-image">
+                                    <img src="{{asset('public/new_home_page/3man.png')}}" alt="{{ __('hero.creators') }}" class="hero-image">
                                 
                                 </div>
                             </div>
@@ -70,38 +69,37 @@
                             <div class="hero-text">
                                 <div class="hero-badge">
                                     <i class="fas fa-trophy"></i>
-                                    <span>Premium Experience</span>
+                                    <span>{{ __('hero.premium_experience') }}</span>
                                 </div>
                                 <h1 class="hero-title">
-                                    Monetize Your
-                                    <span class="gradient-text">Passion</span>
+                                    {{ __('hero.monetize_your') }}
+                                    <span class="gradient-text">{{ __('hero.passion') }}</span>
                                 </h1>
                                 <p class="hero-description">
-                                    Turn your creativity into income. Our platform provides all the tools you need 
-                                    to build, grow, and monetize your audience effectively.
+                                    {{ __('hero.monetize_description') }}
                                 </p>
                                 <div class="hero-features">
                                     <div class="feature-item">
                                         <i class="fas fa-check-circle"></i>
-                                        <span>Multiple Revenue Streams</span>
+                                        <span>{{ __('hero.multiple_revenue') }}</span>
                                     </div>
                                     <div class="feature-item">
                                         <i class="fas fa-check-circle"></i>
-                                        <span>Advanced Analytics</span>
+                                        <span>{{ __('hero.advanced_analytics') }}</span>
                                     </div>
                                     <div class="feature-item">
                                         <i class="fas fa-check-circle"></i>
-                                        <span>24/7 Support</span>
+                                        <span>{{ __('hero.support_24_7') }}</span>
                                     </div>
                                 </div>
                                 <div class="hero-actions">
                                     <a href="{{ url('/register') }}" class="btn-hero-primary">
                                         <i class="fas fa-crown"></i>
-                                        Go Premium
+                                        {{ __('hero.go_premium') }}
                                     </a>
                                     <a href="#" class="btn-hero-secondary">
                                         <i class="fas fa-info-circle"></i>
-                                        Learn More
+                                        {{ __('hero.learn_more') }}
                                     </a>
                                 </div>
                             </div>
@@ -109,7 +107,7 @@
                         <div class="col-lg-6">
                             <div class="hero-visual">
                                 <div class="hero-image-container">
-                                    <img src="{{asset('public/new_home_page/3man.png')}}" alt="Premium Features" class="hero-image">
+                                    <img src="{{asset('public/new_home_page/3man.png')}}" alt="{{ __('hero.premium_features') }}" class="hero-image">
                                   
                                 </div>
                             </div>
@@ -129,20 +127,20 @@
                             <div class="hero-text">
                                 <div class="hero-badge">
                                     <i class="fas fa-globe"></i>
-                                    <span>Global Community</span>
+                                    <span>{{ __('hero.global_community') }}</span>
                                 </div>
                                 <h1 class="hero-title">
-                                    Join the
-                                    <span class="gradient-text">Revolution</span>
+                                    {{ __('hero.join_the') }}
+                                    <span class="gradient-text">{{ __('hero.revolution') }}</span>
                                 </h1>
                                 <div class="hero-testimonial">
                                     <div class="testimonial-content">
-                                        <p>"This platform changed my life. I went from hobby creator to full-time entrepreneur!"</p>
+                                        <p>"{{ __('hero.testimonial_text') }}"</p>
                                         <div class="testimonial-author">
-                                            <img src="{{asset('public/new_home_page/3man.png')}}" alt="Creator">
+                                            <img src="{{asset('public/new_home_page/3man.png')}}" alt="{{ __('hero.creator') }}">
                                             <div>
-                                                <span class="author-name">Sarah Johnson</span>
-                                                <span class="author-title">Top Creator</span>
+                                                <span class="author-name">{{ __('hero.testimonial_author') }}</span>
+                                                <span class="author-title">{{ __('hero.top_creator') }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -150,11 +148,11 @@
                                 <div class="hero-actions">
                                     <a href="{{ url('/register') }}" class="btn-hero-primary">
                                         <i class="fas fa-users"></i>
-                                        Join Community
+                                        {{ __('hero.join_community') }}
                                     </a>
                                     <a href="{{ url('/creators') }}" class="btn-hero-secondary">
                                         <i class="fas fa-eye"></i>
-                                        Watch Demo
+                                        {{ __('hero.watch_demo') }}
                                     </a>
                                 </div>
                             </div>
@@ -162,7 +160,7 @@
                         <div class="col-lg-6">
                             <div class="hero-visual">
                                 <div class="hero-image-container">
-                                    <img src="{{asset('public/new_home_page/3man.png')}}" alt="Community" class="hero-image">
+                                    <img src="{{asset('public/new_home_page/3man.png')}}" alt="{{ __('hero.community') }}" class="hero-image">
                                 
                                 </div>
                             </div>

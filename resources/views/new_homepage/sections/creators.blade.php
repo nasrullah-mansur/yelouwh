@@ -7,13 +7,13 @@
                     <i class="fas fa-clock"></i>
                 </div>
                 <div class="header-text">
-                    <h2 class="section-title">Recently Added</h2>
-                    <p class="section-subtitle">Fresh talent joining our creative community</p>
+                    <h2 class="section-title">{{ __('sections.recently_added') }}</h2>
+                    <p class="section-subtitle">{{ __('sections.fresh_talent') }}</p>
                 </div>
             </div>
             <div class="header-actions">
                 <a href="{{ url('/creators/new') }}" class="view-all-btn">
-                    <span>View All</span>
+                    <span>{{ __('sections.view_all') }}</span>
                     <i class="fas fa-arrow-right"></i>
                 </a>
                 <!-- Carousel Navigation -->
@@ -56,12 +56,12 @@
                                         <div class="quick-actions">
                                             <button class="quick-action-btn view-btn" onclick="window.location.href='{{ url($creator->username) }}'">
                                                 <i class="fas fa-eye"></i>
-                                                <span>View Profile</span>
+                                                <span>{{ __('sections.view_profile') }}</span>
                                             </button>
                                             @if($creator->free_subscription == 'no')
                                                 <button class="quick-action-btn support-btn premium">
                                                     <i class="fas fa-heart"></i>
-                                                    <span>Support</span>
+                                                    <span>{{ __('sections.support') }}</span>
                                                 </button>
                                             @endif
                                         </div>
@@ -72,13 +72,13 @@
                                 <div class="creator-badge new">
                                     @if($creator->verified_id == 'yes')
                                         <i class="fas fa-check-circle"></i>
-                                        Verified
+                                        {{ __('sections.verified') }}
                                     @elseif($creator->featured == 'yes')
                                         <i class="fas fa-star"></i>
-                                        Featured
+                                        {{ __('sections.featured') }}
                                     @else
                                         <i class="fas fa-sparkles"></i>
-                                        New
+                                        {{ __('sections.new') }}
                                     @endif
                                 </div>
                             </div>
@@ -89,11 +89,11 @@
                     <div class="no-creators-message">
                         <div class="message-content">
                             <i class="fas fa-clock"></i>
-                            <h3>No Recently Added Creators</h3>
-                            <p>Check back soon for new creators joining our platform!</p>
+                            <h3>{{ __('sections.no_recently_added') }}</h3>
+                            <p>{{ __('sections.check_back_creators') }}</p>
                             <a href="{{ url('/creators') }}" class="btn btn-primary">
                                 <i class="fas fa-search"></i>
-                                Explore All Creators
+                                {{ __('sections.explore_all_creators') }}
                             </a>
                         </div>
                     </div>
@@ -112,13 +112,13 @@
                     <i class="fas fa-crown"></i>
                 </div>
                 <div class="header-text">
-                    <h2 class="section-title">Featured Creators</h2>
-                    <p class="section-subtitle">Handpicked exceptional talent creating amazing content</p>
+                    <h2 class="section-title">{{ __('sections.featured_creators') }}</h2>
+                    <p class="section-subtitle">{{ __('sections.handpicked_talent') }}</p>
                 </div>
             </div>
             <div class="header-actions">
                 <a href="{{ url('/creators/featured') }}" class="view-all-btn">
-                    <span>View All</span>
+                    <span>{{ __('sections.view_all') }}</span>
                     <i class="fas fa-arrow-right"></i>
                 </a>
                 <!-- Carousel Navigation -->
@@ -161,12 +161,12 @@
                                         <div class="quick-actions">
                                             <button class="quick-action-btn view-btn" onclick="window.location.href='{{ url($creator->username) }}'">
                                                 <i class="fas fa-eye"></i>
-                                                <span>View Profile</span>
+                                                <span>{{ __('sections.view_profile') }}</span>
                                             </button>
                                             @if($creator->free_subscription == 'no')
                                                 <button class="quick-action-btn support-btn premium">
                                                     <i class="fas fa-heart"></i>
-                                                    <span>Support</span>
+                                                    <span>{{ __('sections.support') }}</span>
                                                 </button>
                                             @endif
                                         </div>
@@ -180,11 +180,11 @@
                     <div class="no-creators-message">
                         <div class="message-content">
                             <i class="fas fa-users"></i>
-                            <h3>No Featured Creators Available</h3>
-                            <p>Check back soon for amazing featured creators!</p>
+                            <h3>{{ __('sections.no_featured_creators') }}</h3>
+                            <p>{{ __('sections.check_back_featured') }}</p>
                             <a href="{{ url('/creators') }}" class="btn btn-primary">
                                 <i class="fas fa-search"></i>
-                                Explore All Creators
+                                {{ __('sections.explore_all_creators') }}
                             </a>
                         </div>
                     </div>

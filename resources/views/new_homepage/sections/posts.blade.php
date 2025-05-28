@@ -8,13 +8,13 @@
                     <i class="fas fa-newspaper"></i>
                 </div>
                 <div class="header-text">
-                    <h2 class="section-title">Recent Posts</h2>
-                    <p class="section-subtitle">Latest updates from our creative community</p>
+                    <h2 class="section-title">{{ __('sections.recent_posts') }}</h2>
+                    <p class="section-subtitle">{{ __('sections.latest_updates') }}</p>
                 </div>
             </div>
             <div class="header-actions">
                 <a href="{{ url('/explore') }}" class="view-all-btn">
-                    <span>View All Posts</span>
+                    <span>{{ __('sections.view_all_posts') }}</span>
                     <i class="fas fa-arrow-right"></i>
                 </a>
                 <!-- Carousel Navigation -->
@@ -138,11 +138,11 @@
                     <div class="no-posts-message">
                         <div class="message-content">
                             <i class="fas fa-newspaper"></i>
-                            <h3>No Recent Posts</h3>
-                            <p>Check back soon for amazing content from our creators!</p>
+                            <h3>{{ __('sections.no_recent_posts') }}</h3>
+                            <p>{{ __('sections.check_back_soon') }}</p>
                             <a href="{{ url('/creators') }}" class="btn btn-primary">
                                 <i class="fas fa-search"></i>
-                                Explore Creators
+                                {{ __('sections.explore_creators') }}
                             </a>
                         </div>
                     </div>

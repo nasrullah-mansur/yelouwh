@@ -12,14 +12,14 @@
                     <span class="title-icon" style="width: 60px; height: 60px;">
                         <i class="fas fa-compass"></i>
                     </span>
-                    Explore Categories
+                    {{ __('sections.explore_categories') }}
                     <span class="title-accent"></span>
                 </h2>
-                <p class="section-subtitle">Discover amazing content across different creative categories</p>
+                <p class="section-subtitle">{{ __('sections.discover_content') }}</p>
             </div>
             <div class="section-actions">
                 <button class="view-all-btn">
-                    <span>View All</span>
+                    <span>{{ __('sections.view_all') }}</span>
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
@@ -72,8 +72,8 @@
                 <div class="col-12 text-center py-5">
                     <div class="text-muted">
                         <i class="fas fa-inbox fa-3x mb-3"></i>
-                        <p>No categories available at the moment.</p>
-                        <p><small>Please check back later or contact support.</small></p>
+                        <p>{{ __('sections.no_categories') }}</p>
+                        <p><small>{{ __('sections.check_back_later') }}</small></p>
                     </div>
                 </div>
             @endforelse

@@ -6,18 +6,18 @@
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="newsletter-content">
-                        <h3>Stay in the Loop</h3>
-                        <p>Get the latest updates, creator spotlights, and exclusive content delivered to your inbox.</p>
+                        <h3>{{ __('sections.stay_in_loop') }}</h3>
+                        <p>{{ __('sections.newsletter_description') }}</p>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="newsletter-form">
                         <form class="subscribe-form">
                             <div class="input-group">
-                                <input type="email" class="form-control" placeholder="Enter your email address" required>
+                                <input type="email" class="form-control" placeholder="{{ __('sections.enter_email') }}" required>
                                 <button type="submit" class="subscribe-btn">
                                     <i class="fas fa-paper-plane"></i>
-                                    Subscribe
+                                    {{ __('sections.subscribe') }}
                                 </button>
                             </div>
                         </form>
@@ -38,8 +38,7 @@
                             <img src="{{ asset('public/new_home_page/logo.png') }}" alt="Yelouwh Logo" />
                         </div>
                         <p class="brand-description">
-                            Empowering creators worldwide with innovative tools and community support. 
-                            Join thousands of creators building their dreams on Yelouwh.
+                            {{ __('sections.brand_description') }}
                         </p>
                         <div class="social-links">
                             <a href="#" class="social-link twitter">
@@ -66,14 +65,14 @@
                     <div class="footer-column">
                         <h4 class="column-title">
                             <i class="fas fa-info-circle"></i>
-                            About
+                            {{ __('sections.about') }}
                         </h4>
                         <ul class="footer-links">
-                            <li><a href="{{ url('/p/about') }}">About Us</a></li>
-                            <li><a href="{{ url('/p/how-it-works') }}">How It Works</a></li>
-                            <li><a href="{{ url('/contact') }}">Contact Us</a></li>
-                            <li><a href="#">Careers</a></li>
-                            <li><a href="#">Press Kit</a></li>
+                            <li><a href="{{ url('/p/about') }}">{{ __('sections.about_us') }}</a></li>
+                            <li><a href="{{ url('/p/how-it-works') }}">{{ __('sections.how_it_works') }}</a></li>
+                            <li><a href="{{ url('/contact') }}">{{ __('sections.contact_us') }}</a></li>
+                            <li><a href="#">{{ __('sections.careers') }}</a></li>
+                            <li><a href="#">{{ __('sections.press_kit') }}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -83,15 +82,15 @@
                     <div class="footer-column">
                         <h4 class="column-title">
                             <i class="fas fa-th-large"></i>
-                            Categories
+                            {{ __('sections.categories') }}
                         </h4>
                         <ul class="footer-links">
-                            <li><a href="{{ url('/category/animation') }}">Animation</a></li>
-                            <li><a href="{{ url('/category/artist') }}">Artist</a></li>
-                            <li><a href="{{ url('/category/designer') }}">Designer</a></li>
-                            <li><a href="{{ url('/category/developer') }}">Developer</a></li>
-                            <li><a href="{{ url('/category/photography') }}">Photography</a></li>
-                            <li><a href="{{ url('/category/others') }}">View All</a></li>
+                            <li><a href="{{ url('/category/animation') }}">{{ __('sections.animation') }}</a></li>
+                            <li><a href="{{ url('/category/artist') }}">{{ __('sections.artist') }}</a></li>
+                            <li><a href="{{ url('/category/designer') }}">{{ __('sections.designer') }}</a></li>
+                            <li><a href="{{ url('/category/developer') }}">{{ __('sections.developer') }}</a></li>
+                            <li><a href="{{ url('/category/photography') }}">{{ __('sections.photography') }}</a></li>
+                            <li><a href="{{ url('/category/others') }}">{{ __('sections.view_all') }}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -101,14 +100,14 @@
                     <div class="footer-column">
                         <h4 class="column-title">
                             <i class="fas fa-headset"></i>
-                            Support
+                            {{ __('sections.support') }}
                         </h4>
                         <ul class="footer-links">
-                            <li><a href="#">Help Center</a></li>
-                            <li><a href="#">Creator Guide</a></li>
-                            <li><a href="#">Community</a></li>
-                            <li><a href="#">Report Issue</a></li>
-                            <li><a href="#">Safety</a></li>
+                            <li><a href="#">{{ __('sections.help_center') }}</a></li>
+                            <li><a href="#">{{ __('sections.creator_guide') }}</a></li>
+                            <li><a href="#">{{ __('sections.community') }}</a></li>
+                            <li><a href="#">{{ __('sections.report_issue') }}</a></li>
+                            <li><a href="#">{{ __('sections.safety') }}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -118,14 +117,14 @@
                     <div class="footer-column">
                         <h4 class="column-title">
                             <i class="fas fa-user"></i>
-                            Account
+                            {{ __('sections.account') }}
                         </h4>
                         <ul class="footer-links">
-                            <li><a href="{{ url('/login') }}">Sign In</a></li>
-                            <li><a href="{{ url('/register') }}">Sign Up</a></li>
-                            <li><a href="#">Creator Dashboard</a></li>
-                            <li><a href="#">Settings</a></li>
-                            <li><a href="#">Billing</a></li>
+                            <li><a href="{{ url('/login') }}">{{ __('sections.sign_in') }}</a></li>
+                            <li><a href="{{ url('/register') }}">{{ __('sections.sign_up') }}</a></li>
+                            <li><a href="#">{{ __('sections.creator_dashboard') }}</a></li>
+                            <li><a href="#">{{ __('sections.settings') }}</a></li>
+                            <li><a href="#">{{ __('sections.billing') }}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -139,23 +138,16 @@
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="copyright">
-                        <p>&copy; 2025 <span class="brand-highlight">Yelouwh</span>. All rights reserved.</p>
+                        <p>&copy; 2025 <span class="brand-highlight">Yelouwh</span>. {{ __('sections.all_rights_reserved') }}</p>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="footer-legal">
                         <ul>
-                            <li><a href="{{ url('/p/terms-of-service') }}">Terms</a></li>
-                            <li><a href="{{ url('/p/privacy') }}">Privacy</a></li>
-                            <li><a href="{{ url('/p/cookies') }}">Cookies</a></li>
+                            <li><a href="{{ url('/p/terms-of-service') }}">{{ __('sections.terms') }}</a></li>
+                            <li><a href="{{ url('/p/privacy') }}">{{ __('sections.privacy') }}</a></li>
+                            <li><a href="{{ url('/p/cookies') }}">{{ __('sections.cookies') }}</a></li>
                             <li>
-                                <div class="language-selector">
-                                    <i class="fas fa-globe"></i>
-                                    <select>
-                                        <option value="en">English</option>
-                                        <option value="es">Español</option>
-                                    </select>
-                                </div>
                             </li>
                         </ul>
                     </div>
