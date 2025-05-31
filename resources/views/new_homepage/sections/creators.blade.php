@@ -16,15 +16,6 @@
                     <span>{{ __('sections.view_all') }}</span>
                     <i class="fas fa-arrow-right"></i>
                 </a>
-                <!-- Carousel Navigation -->
-                <div class="carousel-navigation">
-                    <button class="nav-btn prev-btn" data-carousel="recently-added">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="nav-btn next-btn" data-carousel="recently-added">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -121,15 +112,6 @@
                     <span>{{ __('sections.view_all') }}</span>
                     <i class="fas fa-arrow-right"></i>
                 </a>
-                <!-- Carousel Navigation -->
-                <div class="carousel-navigation">
-                    <button class="nav-btn prev-btn" data-carousel="featured">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="nav-btn next-btn" data-carousel="featured">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
             </div>
         </div>
 

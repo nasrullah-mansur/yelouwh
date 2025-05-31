@@ -18,14 +18,7 @@
                     <i class="fas fa-arrow-right"></i>
                 </a>
                 <!-- Carousel Navigation -->
-                <div class="carousel-navigation">
-                    <button class="nav-btn prev-btn" data-carousel="recent-posts">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="nav-btn next-btn" data-carousel="recent-posts">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
+               
             </div>
         </div>
 

@@ -588,12 +588,18 @@
             .header-actions {
                 display: flex;
                 align-items: center;
+                justify-content: flex-end;
                 gap: 20px;
+                flex-wrap: nowrap;
             }
             
             .header-actions .carousel-navigation {
                 display: flex;
+                align-items: center;
                 gap: 8px;
+                flex-shrink: 0;
+                width: 100%;
+
             }
             
             .header-actions .nav-btn {
@@ -631,13 +637,17 @@
                 text-decoration: none;
                 padding: 10px 20px;
                 border-radius: 25px;
-                display: flex;
+                display: inline-flex;
                 align-items: center;
                 gap: 8px;
                 font-weight: 600;
                 transition: all 0.3s ease;
                 border: none;
                 cursor: pointer;
+                white-space: nowrap;
+                flex-shrink: 0;
+                height: 40px;
+                line-height: 1;
             }
             
             .view-all-btn:hover {
@@ -658,19 +668,57 @@
             }
             
             /* Responsive Header Actions */
+            @media (max-width: 992px) {
+                .header-actions {
+                    justify-content: space-between;
+                    width: 100%;
+                }
+            }
+            
             @media (max-width: 768px) {
                 .header-actions {
-                    flex-direction: column;
-                    gap: 15px;
-                    align-items: stretch;
+                    gap: 12px;
+                    flex-direction: row;
+                    justify-content: flex-end;
+                    margin-left: auto;
+                    align-items: center;
+                    flex-wrap: nowrap;
                 }
                 
-                .header-actions .carousel-navigation {
-                    justify-content: center;
+                .header-actions .nav-btn {
+                    width: 32px;
+                    height: 32px;
+                    font-size: 11px;
                 }
                 
                 .view-all-btn {
+                    padding: 8px 14px;
+                    font-size: 12px;
+                    border-radius: 20px;
+                    gap: 6px;
+                    height: 32px;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .header-actions {
+                    gap: 8px;
+                    flex-wrap: wrap;
                     justify-content: center;
+                }
+                
+                .header-actions .nav-btn {
+                    width: 28px;
+                    height: 28px;
+                    font-size: 10px;
+                }
+                
+                .view-all-btn {
+                    padding: 6px 12px;
+                    font-size: 11px;
+                    border-radius: 18px;
+                    gap: 4px;
+                    height: 28px;
                 }
             }
         `;
