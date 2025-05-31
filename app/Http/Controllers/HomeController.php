@@ -11,6 +11,7 @@ use App\Models\Products;
 use App\Models\Bookmarks;
 use App\Models\Categories;
 use App\Models\StoryFonts;
+use App\Models\HeroSlide;
 use Illuminate\Http\Request;
 use App\Models\AdminSettings;
 use App\Models\LiveStreamings;
@@ -189,6 +190,11 @@ class HomeController extends Controller
         ->limit(12)
         ->get();
 
+      // Get hero slides for homepage
+      $heroSlides = HeroSlide::active()
+        ->ordered()
+        ->get();
+
       // return view('index.' . $home, [
       //   'users' => $users ?? null,
       //   'usersTotal' => $usersTotal
@@ -197,7 +203,8 @@ class HomeController extends Controller
       return view("new_homepage.index", [
         'featuredCreators' => $featuredCreators,
         'recentlyAddedCreators' => $recentlyAddedCreators,
-        'recentPosts' => $recentPosts
+        'recentPosts' => $recentPosts,
+        'heroSlides' => $heroSlides
       ]);
 
     } else {

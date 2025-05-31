@@ -56,7 +56,7 @@ class HeroSlide extends Model
         if ($this->background_image) {
             return asset('storage/hero_slides/' . $this->background_image);
         }
-        return asset('public/new_home_page/banner.jpg');
+        return asset('new_home_page/banner.jpg');
     }
 
     public function getHeroImageUrlAttribute()
@@ -64,7 +64,7 @@ class HeroSlide extends Model
         if ($this->hero_image) {
             return asset('storage/hero_slides/' . $this->hero_image);
         }
-        return asset('public/new_home_page/3man.png');
+        return asset('new_home_page/3man.png');
     }
 
     // Helper methods

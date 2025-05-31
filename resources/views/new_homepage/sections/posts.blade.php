@@ -42,38 +42,44 @@
                                         @if($post->media->isNotEmpty() && $post->media->first())
                                             @php $media = $post->media->first(); @endphp
                                             @if($media->type == 'image' && !empty($media->image))
-                                                <img src="{{ Helper::getFile(config('path.images').$media->image) }}" alt="{{ $post->title ?: 'Post Image' }}" />
+                                                <img src="{{ Helper::getFile(config('path.images').$media->image) }}" 
+                                                     alt="{{ $post->title ?: 'Post Image' }}" 
+                                                     onerror="this.src='{{ asset('public/new_home_page/default-post.jpg') }}'" />
                                             @elseif($media->type == 'video' && !empty($media->video_poster))
-                                                <img src="{{ Helper::getFile(config('path.videos').$media->video_poster) }}" alt="{{ $post->title ?: 'Video Thumbnail' }}" />
+                                                <img src="{{ Helper::getFile(config('path.videos').$media->video_poster) }}" 
+                                                     alt="{{ $post->title ?: 'Video Thumbnail' }}" 
+                                                     onerror="this.src='{{ asset('public/new_home_page/default-video.jpg') }}'" />
                                             @elseif($media->type == 'video' && !empty($media->video_embed))
                                                 @php
                                                     $videoId = '';
+                                                    $thumbnailUrl = '';
                                                     if (strpos($media->video_embed, 'youtube.com') !== false || strpos($media->video_embed, 'youtu.be') !== false) {
                                                         preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $media->video_embed, $matches);
                                                         $videoId = $matches[1] ?? '';
-                                                        $thumbnailUrl = "https://img.youtube.com/vi/{$videoId}/maxresdefault.jpg";
+                                                        $thumbnailUrl = $videoId ? "https://img.youtube.com/vi/{$videoId}/maxresdefault.jpg" : asset('public/new_home_page/default-video.jpg');
                                                     } elseif (strpos($media->video_embed, 'vimeo.com') !== false) {
                                                         preg_match('/vimeo\.com\/(\d+)/', $media->video_embed, $matches);
                                                         $videoId = $matches[1] ?? '';
-                                                        $thumbnailUrl = "https://vumbnail.com/{$videoId}.jpg";
+                                                        $thumbnailUrl = $videoId ? "https://vumbnail.com/{$videoId}.jpg" : asset('public/new_home_page/default-video.jpg');
                                                     } else {
                                                         $thumbnailUrl = asset('public/new_home_page/default-video.jpg');
                                                     }
                                                 @endphp
-                                                <img src="{{ $thumbnailUrl }}" alt="{{ $post->title ?: 'Video Thumbnail' }}" />
+                                                <img src="{{ $thumbnailUrl }}" 
+                                                     alt="{{ $post->title ?: 'Video Thumbnail' }}" 
+                                                     onerror="this.src='{{ asset('public/new_home_page/default-video.jpg') }}'" />
                                             @elseif($media->type == 'video' && !empty($media->video))
                                                 <!-- For uploaded video files, try to show first frame or use default -->
-                                                @php
-                                                    $videoPath = Helper::getFile(config('path.videos').$media->video);
-                                                    // For now, show default video thumbnail - could be enhanced to show video first frame
-                                                @endphp
-                                                <img src="{{ asset('public/new_home_page/default-video.jpg') }}" alt="{{ $post->title ?: 'Video Thumbnail' }}" />
+                                                <img src="{{ asset('public/new_home_page/default-video.jpg') }}" 
+                                                     alt="{{ $post->title ?: 'Video Thumbnail' }}" />
                                             @elseif($media->type == 'music' && !empty($media->music))
                                                 <!-- For music files, show default music thumbnail -->
-                                                <img src="{{ asset('public/new_home_page/default-music.jpg') }}" alt="{{ $post->title ?: 'Music Track' }}" />
+                                                <img src="{{ asset('public/new_home_page/default-music.jpg') }}" 
+                                                     alt="{{ $post->title ?: 'Music Track' }}" />
                                             @elseif($media->type == 'file' && !empty($media->file))
                                                 <!-- For file uploads, show default file thumbnail -->
-                                                <img src="{{ asset('public/new_home_page/default-post.jpg') }}" alt="{{ $post->title ?: 'File Content' }}" />
+                                                <img src="{{ asset('public/new_home_page/default-post.jpg') }}" 
+                                                     alt="{{ $post->title ?: 'File Content' }}" />
                                             @else
                                                 <!-- Fallback: show post description as text overlay on default background -->
                                                 @if(!empty($post->description))
@@ -83,7 +89,8 @@
                                                         </div>
                                                     </div>
                                                 @else
-                                                    <img src="{{ asset('public/new_home_page/default-post.jpg') }}" alt="{{ $post->title ?: 'Post Content' }}" />
+                                                    <img src="{{ asset('public/new_home_page/default-post.jpg') }}" 
+                                                         alt="{{ $post->title ?: 'Post Content' }}" />
                                                 @endif
                                             @endif
                                         @else
@@ -95,7 +102,8 @@
                                                     </div>
                                                 </div>
                                             @else
-                                                <img src="{{ asset('public/new_home_page/default-post.jpg') }}" alt="{{ $post->title ?: 'Post Content' }}" />
+                                                <img src="{{ asset('public/new_home_page/default-post.jpg') }}" 
+                                                     alt="{{ $post->title ?: 'Post Content' }}" />
                                             @endif
                                         @endif
                                     </div>

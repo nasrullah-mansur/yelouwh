@@ -69,6 +69,22 @@ use App\Http\Controllers\UploadMediaWelcomeMessageController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/simulator', [HomeController::class, 'simulator'])->name('home.simulator');
 
+// Test route for debugging images (remove in production)
+Route::get('/test-images', function () {
+    $testPaths = [
+        'uploads/avatar/abu8-817482892916ccbbycojh.jpg',
+        'uploads/updates/images/test-image.jpg',
+        'uploads/avatar/nonexistent.jpg'
+    ];
+    
+    $results = [];
+    foreach ($testPaths as $path) {
+        $results[$path] = \App\Helper::debugFile($path);
+    }
+    
+    return response()->json($results, 200, [], JSON_PRETTY_PRINT);
+});
+
 // Homepage Gallery Routes
 Route::get('/homepage-gallery/{slug}', [App\Http\Controllers\HomepageGalleryController::class, 'show'])->name('homepage-gallery.show');
 Route::get('/api/homepage-galleries', [App\Http\Controllers\HomepageGalleryController::class, 'apiIndex'])->name('api.homepage-galleries');

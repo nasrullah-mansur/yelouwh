@@ -858,11 +858,74 @@ class Helper
 	// Get file from Disk
 	public static function getFile($path)
 	{
+		if (empty($path)) {
+			return asset('public/img/default.jpg');
+		}
+
+		// If it's already a full URL, return as is
+		if (filter_var($path, FILTER_VALIDATE_URL)) {
+			return $path;
+		}
+
 		if (env('FILESYSTEM_DRIVER') == 'dospace' && env('DOS_CDN')) {
 			return 'https://' . env('DOS_BUCKET') . '.' . env('DOS_DEFAULT_REGION') . '.cdn.digitaloceanspaces.com/' . $path;
 		} else {
-			return Storage::url($path);
+			// Try multiple possible locations for the file
+			$possiblePaths = [
+				public_path($path),
+				public_path('public/' . $path),
+				storage_path('app/public/' . $path),
+			];
+
+			$possibleUrls = [
+				asset($path),
+				asset('public/' . $path),
+				asset('storage/' . $path),
+			];
+
+			// Check if file exists in any of the possible locations
+			foreach ($possiblePaths as $index => $filePath) {
+				if (file_exists($filePath)) {
+					return $possibleUrls[$index];
+				}
+			}
+
+			// Use Storage::url as fallback
+			try {
+				$storageUrl = Storage::url($path);
+				return $storageUrl;
+			} catch (\Exception $e) {
+				return asset('public/img/default.jpg');
+			}
 		}
+	}
+
+	// Debug method to check file locations
+	public static function debugFile($path)
+	{
+		$debug = [
+			'original_path' => $path,
+			'possible_locations' => []
+		];
+
+		$possiblePaths = [
+			'public_path' => public_path($path),
+			'public_nested' => public_path('public/' . $path),
+			'storage_path' => storage_path('app/public/' . $path),
+		];
+
+		foreach ($possiblePaths as $key => $filePath) {
+			$debug['possible_locations'][$key] = [
+				'path' => $filePath,
+				'exists' => file_exists($filePath),
+				'url' => $key === 'storage_path' ? asset('storage/' . $path) : ($key === 'public_nested' ? asset('public/' . $path) : asset($path))
+			];
+		}
+
+		$debug['storage_url'] = Storage::url($path);
+		$debug['final_url'] = self::getFile($path);
+
+		return $debug;
 	}
 
 	// User wallet format
