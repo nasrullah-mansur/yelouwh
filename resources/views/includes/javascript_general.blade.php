@@ -11,8 +11,8 @@
 @endif
 
 @auth
-  <script src="{{ asset('public/js/fileuploader/jquery.fileuploader.min.js') }}"></script>
-  <script src="{{ asset('public/js/fileuploader/fileuploader-post.js') }}?v={{$settings->version}}"></script>
+  <script src="{{ asset('public/public/js/fileuploader/jquery.fileuploader.min.js') }}"></script>
+  <script src="{{ asset('public/public/js/fileuploader/fileuploader-post.js') }}?v={{$settings->version}}"></script>
   <script src="{{ asset('public/js/jquery-ui/jquery-ui.min.js') }}"></script>
   @if (request()->path() == '/' 
   		&& auth()->user()->verified_id == 'yes' 
@@ -54,7 +54,7 @@ const lightbox = GLightbox({
 
 @auth
 $('.btnMultipleUpload').on('click', function() {
-  $('.fileuploader').toggleClass('d-block');
+  $('#filePhoto').trigger('click');
 });
 
 	@if (request()->route()->named('post.edit') && $preloadedFile)

@@ -165,7 +165,7 @@
   @yield('javascript')
 
 @auth
-  <div id="bodyContainer"></div>
+  <div id="bodyContainer"></div>/
 @endauth
 </body>
 </html>

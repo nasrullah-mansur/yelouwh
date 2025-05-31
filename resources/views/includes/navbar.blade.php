@@ -12,9 +12,13 @@
 
 			<a class="navbar-brand" href="{{url('/')}}">
 				@if (auth()->check() && auth()->user()->dark_mode == 'on' )
-					<img src="{{url('public/img', $settings->logo)}}" data-logo="{{$settings->logo}}" data-logo-2="{{$settings->logo_2}}" alt="{{$settings->title}}" class="logo align-bottom max-w-100" />
+
+                    <img src="{{ asset('public/new_home_page/logo.png') }}" style="width: 100px;" alt="Yelouwh Logo" />
+
 				@else
-				<img src="{{url('public/img', auth()->guest() && request()->path() == '/' && $settings->home_style == 0 ? $settings->logo : $settings->logo_2)}}" data-logo="{{$settings->logo}}" data-logo-2="{{$settings->logo_2}}" alt="{{$settings->title}}" class="logo align-bottom max-w-100" />
+
+                    <img src="{{ asset('public/new_home_page/logo.png') }}" style="width: 100px;" alt="Yelouwh Logo" />
+
 			@endif
 			</a>
 
