@@ -587,8 +587,7 @@
     }
     
     .carousel-navigation {
-        bottom: 15px;
-        right: 70px;
+        display: none;
     }
 }
 
